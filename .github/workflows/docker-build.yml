@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Create a tag for our container with adjective-animals
         id: tag
-        run echo "image_tag=$(curl -s https://raw.githubusercontent.com/dariusk/corpora/master/data/words/adjs.json | jq -r '.adjs[]' | shuf -n 1)-$(curl -s https://raw.githubusercontent.com/dariusk/corpora/master/data/animals/common.json | jq -r '.animals[]' | shuf -n 1)" >> $GITHUB_ENV
+      - run: echo "image_tag=$(curl -s https://raw.githubusercontent.com/dariusk/corpora/master/data/words/adjs.json | jq -r '.adjs[]' | shuf -n 1)-$(curl -s https://raw.githubusercontent.com/dariusk/corpora/master/data/animals/common.json | jq -r '.animals[]' | shuf -n 1)" >> $GITHUB_ENV
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag pycord:${{ env.image_tag }}
       - name: Login to GitHub Container Registry
