@@ -20,8 +20,6 @@ spec:
       - name: pycord
         image: pycord/pycord:latest
         imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
           # Use a secret called "pycord-config" to mount the config file
         volumeMounts:
         - name: config
