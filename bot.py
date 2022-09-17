@@ -4,7 +4,7 @@ Run a Discord bot that takes the !gas command and shows the status in an embed +
 # Example:
 # python3 gas_bot.py -s etherscan
 
-#from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 from typing import Tuple
 import logging
 import yaml
@@ -28,9 +28,10 @@ from google_images_search import GoogleImagesSearch
 import random
 
 
-db = TinyDB('db.json')
+db = TinyDB("db.json")
 table = Query()
-dbMed = TinyDB('meddb.json')
+dbMed = TinyDB("meddb.json")
+
 
 def get_NFT_image(url):
     ##givenURL will look like https://opensea.io/assets/0x10064373e248bc7253653ca05df73cf226202956/11211
@@ -39,28 +40,33 @@ def get_NFT_image(url):
     asset = asset[1]
     asset = asset.split("?")
     asset = asset[0]
-    #print(asset)
+    # print(asset)
     ##add to api url
-    APIurl = "https://api.opensea.io/api/v1/asset/"+asset
+    APIurl = "https://api.opensea.io/api/v1/asset/" + asset
 
     response = requests.request("GET", APIurl)
-    #print(response.text)
+    # print(response.text)
 
     x = json.loads(response.text, object_hook=lambda d: SimpleNamespace(**d))
-    #print(x.name, x.hometown.name, x.hometown.id)
+    # print(x.name, x.hometown.name, x.hometown.id)
 
-    
-    if x.image_original_url != None and x.image_original_url.startswith('https://ipfs.io') != True and x.image_original_url.endswith('.svg') != True and "." in x.image_original_url[len(x.image_original_url) -4]:
+    if (
+        x.image_original_url != None
+        and x.image_original_url.startswith("https://ipfs.io") != True
+        and x.image_original_url.endswith(".svg") != True
+        and "." in x.image_original_url[len(x.image_original_url) - 4]
+    ):
         print(x.image_original_url)
         return x.image_original_url
     else:
         print(x.image_url)
         return x.image_url
-    
-#for 10k10k   
-def fetch_adj_or_animal(type, aliteration, animal): 
 
-    if(aliteration == True and type =="adjective"):
+
+# for 10k10k
+def fetch_adj_or_animal(type, aliteration, animal):
+
+    if aliteration == True and type == "adjective":
         animalFirst = animal[0]
         url = f"https://random-word-form.herokuapp.com/random/{type}/{animalFirst}"
     else:
@@ -71,20 +77,24 @@ def fetch_adj_or_animal(type, aliteration, animal):
     result = r.json()[0]
     return result
 
-def get_gas_from_etherscan(key: str,
-                           verbose: bool = False) -> Tuple[int, int, int]:
+
+def get_gas_from_etherscan(key: str, verbose: bool = False) -> Tuple[int, int, int]:
     """
     Fetch gas from Etherscan API
     """
-    r = requests.get('https://api.etherscan.io/api',
-                     params={'module': 'gastracker',
-                             'action': 'gasoracle',
-                             'apikey': key})
+    r = requests.get(
+        "https://api.etherscan.io/api",
+        params={"module": "gastracker", "action": "gasoracle", "apikey": key},
+    )
     if r.status_code == 200:
         if verbose:
-            print('200 OK')
-        data = r.json().get('result')
-        return int(data['FastGasPrice']), int(data['ProposeGasPrice']), int(data['SafeGasPrice'])
+            print("200 OK")
+        data = r.json().get("result")
+        return (
+            int(data["FastGasPrice"]),
+            int(data["ProposeGasPrice"]),
+            int(data["SafeGasPrice"]),
+        )
     else:
         if verbose:
             print(r.status_code)
@@ -95,12 +105,16 @@ def get_gas_from_gasnow(verbose: bool = False) -> Tuple[int, int, int]:
     """
     Fetch gas from Gasnow API
     """
-    r = requests.get('https://www.gasnow.org/api/v3/gas/price')
+    r = requests.get("https://www.gasnow.org/api/v3/gas/price")
     if r.status_code == 200:
         if verbose:
-            print('200 OK')
-        data = r.json()['data']
-        return int(data['fast'] // 1e9), int(data['standard'] // 1e9), int(data['slow'] // 1e9)
+            print("200 OK")
+        data = r.json()["data"]
+        return (
+            int(data["fast"] // 1e9),
+            int(data["standard"] // 1e9),
+            int(data["slow"] // 1e9),
+        )
     else:
         if verbose:
             print(r.status_code)
@@ -111,44 +125,51 @@ def get_gas_from_ethgasstation(key: str, verbose: bool = False):
     """
     Fetch gas from ETHGASSTATION API
     """
-    r = requests.get('https://ethgasstation.info/api/ethgasAPI.json?', params={'api-key': key})
+    r = requests.get(
+        "https://ethgasstation.info/api/ethgasAPI.json?", params={"api-key": key}
+    )
     if r.status_code == 200:
         if verbose:
-            print('200 OK')
+            print("200 OK")
         data = r.json()
-        return int(data['fastest'] / 10), int(data['fast'] / 10), int(data['average'] / 10), int(
-            data['safeLow'] / 10), int(data['fastestWait'] * 60), int(data['fastWait'] * 60), int(
-            data['avgWait'] * 60), int(data['safeLowWait'] * 60)
+        return (
+            int(data["fastest"] / 10),
+            int(data["fast"] / 10),
+            int(data["average"] / 10),
+            int(data["safeLow"] / 10),
+            int(data["fastestWait"] * 60),
+            int(data["fastWait"] * 60),
+            int(data["avgWait"] * 60),
+            int(data["safeLowWait"] * 60),
+        )
     else:
         if verbose:
             print(r.status_code)
         time.sleep(10)
 
-def tokenPrice(token,config):
-    #Coinmarketcap call
-    coinurl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
-    coinparameters = {
-      'symbol':token,
-      'convert':'USD'
-    }
+
+def tokenPrice(token, config):
+    # Coinmarketcap call
+    coinurl = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+    coinparameters = {"symbol": token, "convert": "USD"}
     coinheaders = {
-      'Accepts': 'application/json',
-      'X-CMC_PRO_API_KEY': config['coinmarketcapapi'],
+        "Accepts": "application/json",
+        "X-CMC_PRO_API_KEY": config["coinmarketcapapi"],
     }
     session = Session()
     session.headers.update(coinheaders)
     try:
-      response = session.get(coinurl, params=coinparameters).json()
-      data = response['data']
-      ethdata=data[token]
-      pricedata=ethdata['quote']
-      usdprice=pricedata['USD']
-      ethprice=usdprice['price']
-      print(usdprice['price'])
+        response = session.get(coinurl, params=coinparameters).json()
+        data = response["data"]
+        ethdata = data[token]
+        pricedata = ethdata["quote"]
+        usdprice = pricedata["USD"]
+        ethprice = usdprice["price"]
+        print(usdprice["price"])
     except (ConnectionError, Timeout, TooManyRedirects) as e:
-      print(e) 
-    
-    return usdprice['price']
+        print(e)
+
+    return usdprice["price"]
 
 
 def main(source, verbose=False):
@@ -163,7 +184,9 @@ def main(source, verbose=False):
     intents.guilds = True
     intents.members = False
 
-    bot = commands.Bot(command_prefix="!", description=description, intents=intents, help_command=None)
+    bot = commands.Bot(
+        command_prefix="!", description=description, intents=intents, help_command=None
+    )
 
     @bot.event
     async def on_thread_join(thread):
@@ -173,33 +196,34 @@ def main(source, verbose=False):
         # if(botid == NULL):
         #     await thread.send("Im here!")
 
-
     @bot.event
     async def on_message(message):
 
         openseaAssetURL = "https://opensea.io/assets"
         if openseaAssetURL in message.content:
-            #pull URL only from message
-            apiImageUrl = re.search("(?P<url>https?://[^\s]+)", message.content).group("url")
+            # pull URL only from message
+            apiImageUrl = re.search("(?P<url>https?://[^\s]+)", message.content).group(
+                "url"
+            )
             imgURL = get_NFT_image(apiImageUrl)
             print(imgURL)
-            #print(message.channel)
+            # print(message.channel)
             await message.channel.send(f"{imgURL}")
         await bot.process_commands(message)
-
 
     @bot.command(pass_context=True, brief="Show meditation Leaderboard")
     async def meditatedScore(ctx):
 
         search = dbMed.all()
-        #print(search)
+        # print(search)
 
         embed = discord.Embed(title=f"Meditation Leaderboard")
 
         for x in search:
-            user = await bot.fetch_user(x['meditationUser'])
-            embed.add_field(name=f"{user} :", value=f"{x['meditationNum']}", inline=False) 
-
+            user = await bot.fetch_user(x["meditationUser"])
+            embed.add_field(
+                name=f"{user} :", value=f"{x['meditationNum']}", inline=False
+            )
 
         await ctx.send(embed=embed)
 
@@ -208,18 +232,16 @@ def main(source, verbose=False):
         message = ctx.message.content
         projectName = message.split("!projectStats ")
         projectName = projectName[1]
-        projectName = projectName.replace(" ","-")
+        projectName = projectName.replace(" ", "-")
         projectName = projectName.lower()
-        projectGraphUrl = "https://open-graph.opensea.io/v1/collections/"+projectName
+        projectGraphUrl = "https://open-graph.opensea.io/v1/collections/" + projectName
 
         await ctx.send(projectGraphUrl)
 
-
     @bot.command(pass_context=True, brief="random artmatt FB post")
     async def randomArtmatt(ctx):
-        fbPost = random.choice(list(open('randomartmatt.txt')))
+        fbPost = random.choice(list(open("randomartmatt.txt")))
         await ctx.send(fbPost)
-
 
     @bot.command(pass_context=True, brief="Log meditations")
     async def meditated(ctx):
@@ -227,166 +249,203 @@ def main(source, verbose=False):
         meditationUser = ctx.message.author.id
         meditationChannel = ctx.message.channel.id
 
-        #print(ctx.message)
+        # print(ctx.message)
         embed = discord.Embed(title=":pray: Meditation Logged")
         embed.set_author(
-            name='{0.display_name}'.format(ctx.author),
-            icon_url='{0.avatar.url}'.format(ctx.author)
+            name="{0.display_name}".format(ctx.author),
+            icon_url="{0.avatar.url}".format(ctx.author),
         )
 
-        #search if user already there
-        search = dbMed.search(where('meditationUser') == f'{meditationUser}')
-        #if user not already in db
+        # search if user already there
+        search = dbMed.search(where("meditationUser") == f"{meditationUser}")
+        # if user not already in db
         if not search:
-            #insert
-            dbMed.insert({'meditationNum': 1, 'meditationUser': f'{meditationUser}', 'meditationChannel': f'{meditationChannel}'})
+            # insert
+            dbMed.insert(
+                {
+                    "meditationNum": 1,
+                    "meditationUser": f"{meditationUser}",
+                    "meditationChannel": f"{meditationChannel}",
+                }
+            )
         else:
-            currentMeditationCount = (search[0]['meditationNum'])
+            currentMeditationCount = search[0]["meditationNum"]
             newMedCount = int(currentMeditationCount) + 1
-            #update 
-            dbMed.remove(where('meditationUser') == f"{meditationUser}")
-            dbMed.insert({'meditationNum': f'{newMedCount}', 'meditationUser': f'{meditationUser}', 'meditationChannel': f'{meditationChannel}'})
-        #add to text file
-        #file1 = open("gasPingLog.txt", "a")
-        #file1.write(f"{gasNum} {gasUser} {gasChannel}\n")
-        #file1.close()
-
+            # update
+            dbMed.remove(where("meditationUser") == f"{meditationUser}")
+            dbMed.insert(
+                {
+                    "meditationNum": f"{newMedCount}",
+                    "meditationUser": f"{meditationUser}",
+                    "meditationChannel": f"{meditationChannel}",
+                }
+            )
+        # add to text file
+        # file1 = open("gasPingLog.txt", "a")
+        # file1.write(f"{gasNum} {gasUser} {gasChannel}\n")
+        # file1.close()
 
         await ctx.send(embed=embed)
 
     # 2. Load config
-    filename = 'config.yaml'
+    filename = "config.yaml"
     with open(filename) as f:
         config = yaml.load(f, Loader=yaml.Loader)
 
     async def send_update(fastest, average, slow, **kw):
-        status = f'⚡{fastest} |🐢{slow} | !help'
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing,name=status))
-                                                            
+        status = f"⚡{fastest} |🐢{slow} | !help"
+        await bot.change_presence(
+            activity=discord.Activity(type=discord.ActivityType.playing, name=status)
+        )
+
         for guild in bot.guilds:
             guser = guild.get_member(bot.user.id)
-            await guser.edit(nick=f'HelperBot|Gas:{average}')
+            await guser.edit(nick=f"HelperBot|Gas:{average}")
 
-        #print (f"{guild}")
-        print (f"{average}")
+        # print (f"{guild}")
+        print(f"{average}")
 
         ##search db for gas notification
-        notifyList = db.search((Query()['gasNum']) >= average)
+        notifyList = db.search((Query()["gasNum"]) >= average)
         print(f"{notifyList}")
 
-        #loop through notifyList post in discord tagging users of that gas number
+        # loop through notifyList post in discord tagging users of that gas number
 
         for results in notifyList:
             print(results)
-            user = results['gasUser']
-            channelid = results['gasChannel']
-            gas = results['gasNum']
+            user = results["gasUser"]
+            channelid = results["gasChannel"]
+            gas = results["gasNum"]
 
             channel = bot.get_channel(int(channelid))
             print(f"<@{user}>, Gwei is now {gas}")
-           
-            #delete from database
-            #db.update(delete, Query()['gasUser'] == f"{user}")
-            db.remove(where('gasUser') == f"{user}")
-            #remove from LIST
-            #notifyList.pop(idx)
-            
+
+            # delete from database
+            # db.update(delete, Query()['gasUser'] == f"{user}")
+            db.remove(where("gasUser") == f"{user}")
+            # remove from LIST
+            # notifyList.pop(idx)
+
             await channel.send(f"<@{user}>, Gwei is now {gas} or less.")
 
-
-
-        await asyncio.sleep(config['updateFreq'])  # in seconds
+        await asyncio.sleep(config["updateFreq"])  # in seconds
 
     @bot.command(pass_context=True, brief="Get APE price")
     async def ape(ctx):
-        price = tokenPrice('APE',config)
+        price = tokenPrice("APE", config)
         embed = discord.Embed(title="<:apecoin:954387364824899665> Current APE price")
-        embed.add_field(name=f"1 $APE = ", value=f"${price}", inline=False) 
-    
+        embed.add_field(name=f"1 $APE = ", value=f"${price}", inline=False)
+
         await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Get WOOL price")
     async def wool(ctx):
-        price = tokenPrice('WOOL',config)
+        price = tokenPrice("WOOL", config)
         embed = discord.Embed(title=":sheep: Current wool price")
-        embed.add_field(name=f"1 $WOOL = ", value=f"${price}", inline=False) 
-    
+        embed.add_field(name=f"1 $WOOL = ", value=f"${price}", inline=False)
+
         await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Get CFTI price")
     async def cfti(ctx):
-        price = tokenPrice('CFTI',config)
-        embed = discord.Embed(title="<:raidparty:939195769024557186> Current CFTI price")
-        embed.add_field(name=f"1 $CFTI = ", value=f"${price}", inline=False) 
-    
-        await ctx.send(embed=embed)
+        price = tokenPrice("CFTI", config)
+        embed = discord.Embed(
+            title="<:raidparty:939195769024557186> Current CFTI price"
+        )
+        embed.add_field(name=f"1 $CFTI = ", value=f"${price}", inline=False)
 
+        await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Get LOOKS price")
     async def looks(ctx):
-        price = tokenPrice('LOOKS',config)
+        price = tokenPrice("LOOKS", config)
         embed = discord.Embed(title=":eyes: Current LOOKS price")
-        embed.add_field(name=f"1 LOOKS = ", value=f"${price}", inline=False) 
-    
+        embed.add_field(name=f"1 LOOKS = ", value=f"${price}", inline=False)
+
         await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Get custom Token price")
     async def customToken(ctx):
         message = ctx.message.content
 
-        #trim end off
+        # trim end off
         trimmed = message.rstrip()
-        #remove command
+        # remove command
         token = trimmed.split("!customToken ")
         token = token[1]
         token = token.upper()
         print(token)
 
-        price = tokenPrice(token,config)
+        price = tokenPrice(token, config)
         embed = discord.Embed(title=f"Current {token} price")
-        embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=False) 
-    
+        embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=False)
+
         await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Get ETH gas prices")
     async def gas(ctx):
-        #print(vars(ctx))
+        # print(vars(ctx))
         embed = discord.Embed(title=":fuelpump: Current gas prices")
-        if source == 'ethgasstation':
-            fastest, fast, average, slow, fastestWait, fastWait, avgWait, slowWait = get_gas_from_ethgasstation(
-                config['ethgasstationKey'],
-                verbose=verbose)
-            embed.add_field(name=f"Slow :turtle: | {slowWait} seconds", value=f"{round(float(slow), 1)} Gwei",
-                            inline=False)
-            embed.add_field(name=f"Average :person_walking: | {avgWait} seconds",
-                            value=f"{round(float(average), 1)} Gwei", inline=False)
-            embed.add_field(name=f"Fast :race_car: | {fastWait} seconds", value=f"{round(float(fast), 1)} Gwei",
-                            inline=False)
-            embed.add_field(name=f"Quick :zap: | {fastestWait} seconds", value=f"{round(float(fastest), 1)} Gwei",
-                            inline=False)
+        if source == "ethgasstation":
+            (
+                fastest,
+                fast,
+                average,
+                slow,
+                fastestWait,
+                fastWait,
+                avgWait,
+                slowWait,
+            ) = get_gas_from_ethgasstation(config["ethgasstationKey"], verbose=verbose)
+            embed.add_field(
+                name=f"Slow :turtle: | {slowWait} seconds",
+                value=f"{round(float(slow), 1)} Gwei",
+                inline=False,
+            )
+            embed.add_field(
+                name=f"Average :person_walking: | {avgWait} seconds",
+                value=f"{round(float(average), 1)} Gwei",
+                inline=False,
+            )
+            embed.add_field(
+                name=f"Fast :race_car: | {fastWait} seconds",
+                value=f"{round(float(fast), 1)} Gwei",
+                inline=False,
+            )
+            embed.add_field(
+                name=f"Quick :zap: | {fastestWait} seconds",
+                value=f"{round(float(fastest), 1)} Gwei",
+                inline=False,
+            )
         else:
-            if source == 'etherscan':
-                fast, average, slow = get_gas_from_etherscan(config['etherscanKey'], verbose=verbose)
+            if source == "etherscan":
+                fast, average, slow = get_gas_from_etherscan(
+                    config["etherscanKey"], verbose=verbose
+                )
             else:
                 fast, average, slow = get_gas_from_gasnow(verbose=verbose)
             embed.add_field(name=f"Slow :turtle:", value=f"{slow} Gwei", inline=False)
-            embed.add_field(name=f"Average :person_walking:", value=f"{average} Gwei", inline=False)
+            embed.add_field(
+                name=f"Average :person_walking:", value=f"{average} Gwei", inline=False
+            )
             embed.add_field(name=f"Fast :zap:", value=f"{fast} Gwei", inline=False)
-        embed.set_footer(text=f"Fetched from {source}\nUse help to get the list of commands")
-        embed.set_author(name='{0.display_name}'.format(ctx.author),
-            icon_url='{0.avatar.url}'.format(ctx.author)
+        embed.set_footer(
+            text=f"Fetched from {source}\nUse help to get the list of commands"
         )
-        
+        embed.set_author(
+            name="{0.display_name}".format(ctx.author),
+            icon_url="{0.avatar.url}".format(ctx.author),
+        )
+
         await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Get the cost for each tx type")
     async def fees(ctx):
         calculate_eth_tx = lambda gwei, limit: round(gwei * limit * 0.000000001, 4)
         fast, standard, slow = get_gas_from_gasnow(verbose=verbose)
-        eth_price = \
-            requests.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd').json()[
-                'ethereum'][
-                'usd']
+        eth_price = requests.get(
+            "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+        ).json()["ethereum"]["usd"]
         simple_tx_fee_eth = calculate_eth_tx(fast, 21000)
         simple_tx_fee_usd = round(simple_tx_fee_eth * eth_price, 2)
         token_approve_eth = calculate_eth_tx(fast, 51000)
@@ -397,22 +456,24 @@ def main(source, verbose=False):
         range1_uniswap_usd = round(range1_uniswap_eth * eth_price, 2)
         range2_uniswap_eth = calculate_eth_tx(fast, 200000)
         range2_uniswap_usd = round(range2_uniswap_eth * eth_price, 2)
-        fees_eth = f"**Fast: {fast}** **Standard: {standard}** **Slow: {slow}**\n"\
-                   f"Simple ETH TX: **${simple_tx_fee_usd}** ({simple_tx_fee_eth} Ξ)\n" \
-                   f"Token Approval (ERC20): **${token_approve_usd}** ({token_approve_eth} Ξ)\n" \
-                   f"Token Transfer (ERC20): **${token_transfer_usd}** ({token_transfer_eth} Ξ)\n" \
-                   f"Uniswap Trades: **${range1_uniswap_usd} - ${range2_uniswap_usd}** ({range1_uniswap_eth} Ξ - {range2_uniswap_eth} Ξ)\n"
+        fees_eth = (
+            f"**Fast: {fast}** **Standard: {standard}** **Slow: {slow}**\n"
+            f"Simple ETH TX: **${simple_tx_fee_usd}** ({simple_tx_fee_eth} Ξ)\n"
+            f"Token Approval (ERC20): **${token_approve_usd}** ({token_approve_eth} Ξ)\n"
+            f"Token Transfer (ERC20): **${token_transfer_usd}** ({token_transfer_eth} Ξ)\n"
+            f"Uniswap Trades: **${range1_uniswap_usd} - ${range2_uniswap_usd}** ({range1_uniswap_eth} Ξ - {range2_uniswap_eth} Ξ)\n"
+        )
 
         await ctx.send(fees_eth)
 
     @bot.command(pass_context=True, brief="Get list of commands")
     async def help(ctx, args=None):
         help_embed = discord.Embed(
-            title="Gas Tracker",
-            colour=discord.Colour.from_rgb(206, 17, 38))
+            title="Gas Tracker", colour=discord.Colour.from_rgb(206, 17, 38)
+        )
         help_embed.set_author(
-            name='{0.display_name}'.format(ctx.author),
-            icon_url='{0.avatar.url}'.format(ctx.author)
+            name="{0.display_name}".format(ctx.author),
+            icon_url="{0.avatar.url}".format(ctx.author),
         )
         command_list = [x for x in bot.commands if not x.hidden]
 
@@ -421,42 +482,45 @@ def main(source, verbose=False):
 
         command_list.sort(key=sortCommands)
         if not args:
-            help_embed.add_field(
-                name="Command Prefix",
-                value="`!`",
-                inline=False)
+            help_embed.add_field(name="Command Prefix", value="`!`", inline=False)
             help_embed.add_field(
                 name="List of supported commands:",
-                value="```" + "\n".join(['{:>2}. {:<14}{}'.format(str(i + 1), x.name, x.brief) for i, x in
-                                         enumerate(command_list)]) + "```",
-                inline=False
+                value="```"
+                + "\n".join(
+                    [
+                        "{:>2}. {:<14}{}".format(str(i + 1), x.name, x.brief)
+                        for i, x in enumerate(command_list)
+                    ]
+                )
+                + "```",
+                inline=False,
             )
         else:
             help_embed.add_field(
-                name="Nope.",
-                value="Don't think I got that command, boss."
+                name="Nope.", value="Don't think I got that command, boss."
             )
 
-        help_embed.set_footer(text="For any inquiries, suggestions, or bug reports, get in touch with @Zanuss#1483")
+        help_embed.set_footer(
+            text="For any inquiries, suggestions, or bug reports, get in touch with @Zanuss#1483"
+        )
         await ctx.send(embed=help_embed)
-
 
     @bot.command(pass_context=True, brief="Generates new 10k inspiration")
     async def new10k(ctx):
-        
+
         message = ctx.message.content
 
-        #trim end off
+        # trim end off
         trimmed = message.rstrip()
-        #remove command
+        # remove command
         arg = trimmed.split("!new10k ")
         print(arg)
         try:
             arg = arg[1]
         except IndexError:
             arg = ""
-        
-        #fetch_adj_or_animal(type, aliteration, animal)
+
+        # fetch_adj_or_animal(type, aliteration, animal)
 
         if arg == "-a":
             animal = fetch_adj_or_animal("animal", False, False)
@@ -464,128 +528,145 @@ def main(source, verbose=False):
         else:
             animal = fetch_adj_or_animal("animal", False, False)
             adj = fetch_adj_or_animal("adjective", False, animal)
-        
-        
-        gis = GoogleImagesSearch(config['gkey'], config['gcs_cx'])
+
+        gis = GoogleImagesSearch(config["gkey"], config["gcs_cx"])
 
         _search_params = {
-        'q': f'{animal} animal',
-        'num': 1,
-        'fileType': 'png',
-        'rights': 'cc_publicdomain|cc_attribute|cc_sharealike|cc_noncommercial|cc_nonderived'
+            "q": f"{animal} animal",
+            "num": 1,
+            "fileType": "png",
+            "rights": "cc_publicdomain|cc_attribute|cc_sharealike|cc_noncommercial|cc_nonderived",
         }
 
         gis.search(search_params=_search_params)
-        r = gis.results()   
+        r = gis.results()
 
         output10k = f"{adj} {animal}'s {gis.results()[0].url}"
 
         await ctx.send(output10k)
 
-    @bot.command(pass_context=True, brief="Get alerted of a specific gas amount !gasping 10")
+    @bot.command(
+        pass_context=True, brief="Get alerted of a specific gas amount !gasping 10"
+    )
     async def gasping(ctx):
-        
+
         message = ctx.message.content
 
-        #trim end off
+        # trim end off
         trimmed = message.rstrip()
-        #remove command
-        gasNum  = trimmed.split("!gasping ")
-        print (gasNum)
+        # remove command
+        gasNum = trimmed.split("!gasping ")
+        print(gasNum)
         if int(gasNum[1]) >= 0:
             gasNum = int(gasNum[1])
             gasUser = ctx.message.author.id
             gasChannel = ctx.message.channel.id
 
-            #print(ctx.message)
+            # print(ctx.message)
 
             embed = discord.Embed(title=":fuelpump: GasPing Logged")
 
-            fast, average, slow = get_gas_from_etherscan(config['etherscanKey'],verbose=verbose)
-            embed.add_field(name=f"I'll let you know when it hits ", value=f"{gasNum} Gwei", inline=False)
-            embed.set_footer(text=f"Fetched from {source}\nUse help to get the list of commands")
+            fast, average, slow = get_gas_from_etherscan(
+                config["etherscanKey"], verbose=verbose
+            )
+            embed.add_field(
+                name=f"I'll let you know when it hits ",
+                value=f"{gasNum} Gwei",
+                inline=False,
+            )
+            embed.set_footer(
+                text=f"Fetched from {source}\nUse help to get the list of commands"
+            )
             embed.set_author(
-                name='{0.display_name}'.format(ctx.author),
-                icon_url='{0.avatar.url}'.format(ctx.author)
+                name="{0.display_name}".format(ctx.author),
+                icon_url="{0.avatar.url}".format(ctx.author),
             )
 
-        
             print(f"Gas watch: {gasNum}")
             print(f"Gas User: {gasUser}")
 
-            #search if user already there
-            search = db.search(where('gasUser') == f'{gasUser}')
+            # search if user already there
+            search = db.search(where("gasUser") == f"{gasUser}")
 
-            #if user not already in db
+            # if user not already in db
             if not search:
-                #insert
-                db.insert({'gasNum': gasNum, 'gasUser': f'{gasUser}', 'gasChannel': f'{gasChannel}'})
+                # insert
+                db.insert(
+                    {
+                        "gasNum": gasNum,
+                        "gasUser": f"{gasUser}",
+                        "gasChannel": f"{gasChannel}",
+                    }
+                )
             else:
-                #update 
-                db.remove(where('gasUser') == f"{gasUser}")
-                db.insert({'gasNum': gasNum, 'gasUser': f'{gasUser}', 'gasChannel': f'{gasChannel}'})
+                # update
+                db.remove(where("gasUser") == f"{gasUser}")
+                db.insert(
+                    {
+                        "gasNum": gasNum,
+                        "gasUser": f"{gasUser}",
+                        "gasChannel": f"{gasChannel}",
+                    }
+                )
 
-            #add to text file
-            #file1 = open("gasPingLog.txt", "a")
-            #file1.write(f"{gasNum} {gasUser} {gasChannel}\n")
-            #file1.close()
-
+            # add to text file
+            # file1 = open("gasPingLog.txt", "a")
+            # file1.write(f"{gasNum} {gasUser} {gasChannel}\n")
+            # file1.close()
 
             await ctx.send(embed=embed)
         elif gasNum[1] != None:
-            await ctx.send("please provide a gas value greater than or equal to 0 ```!gasing 100```")
+            await ctx.send(
+                "please provide a gas value greater than or equal to 0 ```!gasing 100```"
+            )
         else:
             await ctx.send("STFU stupac")
-            
 
     # 2. Load config
-    filename = 'config.yaml'
+    filename = "config.yaml"
     with open(filename) as f:
         config = yaml.load(f, Loader=yaml.Loader)
 
     async def send_update(fastest, average, slow, **kw):
-        status = f'⚡{fastest} |🐢{slow} | !help'
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing,name=status))
-                                                            
+        status = f"⚡{fastest} |🐢{slow} | !help"
+        await bot.change_presence(
+            activity=discord.Activity(type=discord.ActivityType.playing, name=status)
+        )
+
         for guild in bot.guilds:
             guser = guild.get_member(bot.user.id)
-            await guser.edit(nick=f'HelperBot|Gas:{average}')
+            await guser.edit(nick=f"HelperBot|Gas:{average}")
 
-        #print (f"{guild}")
-        print (f"{average}")
+        # print (f"{guild}")
+        print(f"{average}")
 
         ##search db for gas notification
-        notifyList = db.search((Query()['gasNum']) >= average)
+        notifyList = db.search((Query()["gasNum"]) >= average)
         print(f"{notifyList}")
 
-        #loop through notifyList post in discord tagging users of that gas number
+        # loop through notifyList post in discord tagging users of that gas number
 
         for results in notifyList:
             print(results)
-            user = results['gasUser']
-            channelid = results['gasChannel']
-            gas = results['gasNum']
+            user = results["gasUser"]
+            channelid = results["gasChannel"]
+            gas = results["gasNum"]
 
             channel = bot.get_channel(int(channelid))
             print(f"<@{user}>, Gwei is now {gas}")
-           
-            #delete from database
-            #db.update(delete, Query()['gasUser'] == f"{user}")
-            db.remove(where('gasUser') == f"{user}")
-            #remove from LIST
-            #notifyList.pop(idx)
-            
+
+            # delete from database
+            # db.update(delete, Query()['gasUser'] == f"{user}")
+            db.remove(where("gasUser") == f"{user}")
+            # remove from LIST
+            # notifyList.pop(idx)
+
             await channel.send(f"<@{user}>, Gwei is now {gas} or less.")
 
-
-
-        await asyncio.sleep(config['updateFreq'])  # in seconds
-
-
+        await asyncio.sleep(config["updateFreq"])  # in seconds
 
     @bot.event
     async def on_ready():
-
 
         """
         When discord client is ready
@@ -593,43 +674,46 @@ def main(source, verbose=False):
         while True:
             # 3. Fetch gas
             try:
-                if source == 'etherscan':
-                    gweiList = get_gas_from_etherscan(config['etherscanKey'],
-                                                      verbose=verbose)
-                elif source == 'gasnow':
+                if source == "etherscan":
+                    gweiList = get_gas_from_etherscan(
+                        config["etherscanKey"], verbose=verbose
+                    )
+                elif source == "gasnow":
                     gweiList = get_gas_from_gasnow(verbose=verbose)
-                elif source == 'ethgasstation':
-                    gweiList = get_gas_from_ethgasstation(config['ethgasstationKey'])
+                elif source == "ethgasstation":
+                    gweiList = get_gas_from_ethgasstation(config["ethgasstationKey"])
                     await send_update(gweiList[0], gweiList[2], gweiList[3])
                     continue
                 else:
-                    raise NotImplemented('Unsupported source')
+                    raise NotImplemented("Unsupported source")
                 # 4. Feed it to the bot
                 await send_update(*gweiList)
             except Exception as exc:
                 logger.error(exc)
                 continue
 
-    bot.run(config['discordBotKey'])
+    bot.run(config["discordBotKey"])
 
 
-if __name__ == '__main__':
-    logger = logging.getLogger('discord')
+if __name__ == "__main__":
+    logger = logging.getLogger("discord")
     logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+    handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
+    handler.setFormatter(
+        logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
+    )
     logger.addHandler(handler)
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-s', '--source',
-                        choices=['etherscan', 'gasnow', 'ethgasstation'],
-                        default='etherscan',
-                        help='select API')
+    parser.add_argument(
+        "-s",
+        "--source",
+        choices=["etherscan", "gasnow", "ethgasstation"],
+        default="etherscan",
+        help="select API",
+    )
 
-    parser.add_argument('-v', '--verbose',
-                        action='store_true',
-                        help='toggle verbose')
+    parser.add_argument("-v", "--verbose", action="store_true", help="toggle verbose")
     args = parser.parse_args()
-    main(source=args.source,
-         verbose=args.verbose)
+    main(source=args.source, verbose=args.verbose)
