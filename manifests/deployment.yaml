@@ -1,0 +1,33 @@
+# Deployment for pycord, a Python Discord bot
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pycord
+  namespace: pycord
+  labels:
+    app: pycord
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pycord
+  template:
+    metadata:
+      labels:
+        app: pycord
+    spec:
+      containers:
+      - name: pycord
+        image: pycord/pycord:latest
+        imagePullPolicy: Always
+          # Use a secret called "pycord-config" to mount the config file
+        volumeMounts:
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+          readOnly: true
+      volumes:
+      - name: config
+        secret:
+          secretName: pycord-config
+

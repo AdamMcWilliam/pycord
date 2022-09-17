@@ -120,6 +120,15 @@ You can find more examples in the examples directory.
 
 Note: Make sure you do not reveal your bot token to anyone, it can grant access to your bot.
 
+Docker Build and Run
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: sh
+
+    $ docker build -t pycord .
+    $ docker run -it pycord -v config.json:/app/config.yaml
+
+
 Links
 -----
 

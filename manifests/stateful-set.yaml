@@ -1,0 +1,74 @@
+# Stateful-set for pycord, a discord bot
+# The config.yaml is mounted from a secret.
+# The bot has 2 tinydb files, one for eth alerts and one for storing how often stu meditates.
+# Both are mounted from a persistent volume.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pycord
+  namespace: pycord
+  metadata:
+    labels:
+      app: pycord
+spec:
+  selector:
+    matchLabels:
+      app: pycord
+  serviceName: pycord
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pycord
+    spec:
+      containers:
+      - name: pycord
+        image: pycord:latest
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        - name: eth-db
+          mountPath: /app/db.json
+          subPath: db.json
+        - name: med-db
+          mountPath: /app/meddb.json
+          subPath: meddb.json
+      volumes:
+      - name: config
+        secret:
+          secretName: pycord-config
+      - name: eth-db
+        persistentVolumeClaim:
+          claimName: eth-db
+      - name: med-db
+      persistentVolumeClaim:
+        claimName: med-db
+---
+# Persistent volume claim for eth-db
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: eth-db
+  namespace: pycord
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+---
+# Persistent volume claim for med-db
+# This is a bit bigger because it stores more data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: med-db
+  namespace: pycord
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Mi
