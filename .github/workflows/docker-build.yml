@@ -9,13 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-      - name: Login to DockerHub
-        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-      - name: Push the Docker image
-        run: docker push my-image-name:$(date +%s)
-      - uses: actions/checkout@v2
-      - name: Build the Docker image
         run: echo "image_tag=$(curl -s https://raw.githubusercontent.com/dariusk/corpora/master/data/words/adjs.json | jq -r '.adjs[]' | shuf -n 1)-$(curl -s https://raw.githubusercontent.com/dariusk/corpora/master/data/animals/common.json | jq -r '.animals[]' | shuf -n 1)" >> $GITHUB_ENV && docker build . --file Dockerfile --tag pycord:${{ env.image_tag }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
