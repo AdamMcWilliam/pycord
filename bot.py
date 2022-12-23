@@ -7,6 +7,12 @@ Run a Discord bot that takes the !gas command and shows the status in an embed +
 #from asyncio.windows_events import NULL
 from __future__ import print_function
 from typing import Tuple
+import os
+import string
+import random
+import sqlite3
+import time
+import math
 import logging
 import yaml
 import discord
@@ -26,19 +32,32 @@ import re
 from requests import Request, Session
 import requests
 from google_images_search import GoogleImagesSearch
-import random
 import os.path
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from urllib.request import urlopen
+from json import dumps
 
-
+conn = sqlite3.connect('bot.db')
+c = conn.cursor()
+c.execute("""CREATE TABLE IF NOT EXISTS games(
+   guildid TEXT,
+   gamestatus INT,
+   guesses INT,
+   answer TEXT,
+   charset TEXT,
+   starttime INT);
+""")
+conn.commit()
 
 db = TinyDB('db.json')
 table = Query()
 dbMed = TinyDB('meddb.json')
+dbHackScore = TinyDB('hackScore.json')
+
 
 def get_NFT_image(url):
     ##givenURL will look like https://opensea.io/assets/0x10064373e248bc7253653ca05df73cf226202956/11211
@@ -173,6 +192,102 @@ def main(source, verbose=False):
 
     bot = commands.Bot(command_prefix="!", description=description, intents=intents, help_command=None)
 
+
+        #various getters/setters
+    def get_status(guildid):
+        tup = c.execute("SELECT gamestatus FROM games WHERE guildid=?", (str(guildid),)).fetchone()
+        # new guilds will return None so as not to crash
+        if tup is None:
+            return None
+        return tup[0]
+
+    def update_status(guildid, new_status):
+        c.execute("UPDATE games SET gamestatus=? WHERE guildid=?", (new_status, str(guildid),))
+        conn.commit()
+
+    def get_answer(guildid):
+        return c.execute("SELECT answer FROM games WHERE guildid=?", (str(guildid),)).fetchone()[0]
+
+    def update_answer(guildid, new_answer):
+        c.execute("UPDATE games SET answer=? WHERE guildid=?", (new_answer, str(guildid),))
+        conn.commit()
+
+    def get_guesses(guildid):
+        return c.execute("SELECT guesses FROM games WHERE guildid=?", (str(guildid),)).fetchone()[0]
+
+    def update_guesses(guildid, new_guesses):
+        c.execute("UPDATE games SET guesses=? WHERE guildid=?", (new_guesses, str(guildid),))
+        conn.commit()
+
+    def get_charset(guildid):
+        return c.execute("SELECT charset FROM games WHERE guildid=?", (str(guildid),)).fetchone()[0]
+
+    def update_charset(guildid, new_charset):
+        c.execute("UPDATE games SET charset=? WHERE guildid=?", (new_charset, str(guildid),))
+        conn.commit()
+
+    def get_starttime(guildid):
+        return c.execute("SELECT starttime FROM games WHERE guildid=?", (str(guildid),)).fetchone()[0]
+
+    def update_starttime(guildid, new_starttime):
+        c.execute("UPDATE games SET starttime=? WHERE guildid=?", (new_starttime, str(guildid),))
+        conn.commit()
+
+    @bot.command(name='hack')
+    async def start_hack(ctx, *args):
+        """
+        Initiates a hacking game.
+        Input: variable set of arguments.
+        """
+        guild = ctx.message.guild
+        arg_attempt = 6
+        # parse args (or just the one arg, anyway)
+        if (len(args) > 0):
+            try:
+                arg_attempt = int(args[0])
+                if arg_attempt < 4 or arg_attempt > 12:
+                    raise ValueError
+            except:
+                await ctx.send("Number of turns must be a number between 4 and 12.")
+                return
+        # start the hacking process
+        if get_status(guild) is None:
+            c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)", (str(guild), 0, arg_attempt, "", "", 0))
+            conn.commit()
+        if not get_status(guild):
+            char_list = "".join([string.ascii_letters,string.digits])
+            # remove 0, O, l, I since their discord equivalents look too similar
+            char_list.replace("l", "")
+            char_list.replace("I", "")
+            char_list.replace("0", "")
+            char_list.replace("O", "")
+            #get answer
+            array = random.sample(char_list, 6)
+            update_answer(guild, "".join(random.sample(array, 3)))
+            char_response = ""
+            update_guesses(guild, arg_attempt)
+            for item in array:
+                char_response = "".join([char_response, item])
+            response = ("The available letters are: `{0}`\nYou have {1} guesses.").format(char_response, str(get_guesses(guild)))
+            update_charset(guild, char_response)
+            update_status(guild, True)
+            update_starttime(guild, time.perf_counter())
+            await ctx.send(response)
+        else:
+            await ctx.send("A game is already in progress!")
+
+    @bot.command(name='quit')
+    async def quit(ctx):
+       """
+       Quits the current game.
+       """
+       guild = ctx.message.guild
+       if get_status(guild) == False:
+           await ctx.send("No game is in progress!")
+       else:
+           await ctx.send("Game has been stopped. Answer was: `{0}`".format(get_answer(guild)))
+           update_status(guild, False)
+    
     @bot.event
     async def on_thread_join(thread):
         await thread.join()
@@ -181,19 +296,104 @@ def main(source, verbose=False):
         # if(botid == NULL):
         #     await thread.send("Im here!")
 
-
     @bot.event
     async def on_message(message):
+        guild = message.guild
+        #print(guild)
+        #print(message.content)
+        #tokenPrice
 
-        openseaAssetURL = "https://opensea.io/assets"
-        if openseaAssetURL in message.content:
-            #pull URL only from message
-            apiImageUrl = re.search("(?P<url>https?://[^\s]+)", message.content).group("url")
-            imgURL = get_NFT_image(apiImageUrl)
-            print(imgURL)
-            #print(message.channel)
-            await message.channel.send(f"{imgURL}")
-        await bot.process_commands(message)
+        if message.author != bot.user:
+            if len(message.content) <= 6 and message.content.startswith("$"):
+                
+                # if message.startswith("$") and len(message) <= 5:
+
+                #trim end off
+                trimmed = message.content.rstrip()
+                #remove command
+                token = trimmed.split("$")
+                token = token[1]
+                token = token.upper()
+                print(token)
+
+                # 2. Load config
+                filename = 'config.yaml'
+                with open(filename) as f:
+                    config = yaml.load(f, Loader=yaml.Loader)
+
+                price = tokenPrice(token,config)
+                embed = discord.Embed(title=f"Current {token} price")
+                embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=False) 
+
+                await message.channel.send(embed=embed)
+            #else:
+                #await message.channel.send("nope")
+
+        #hacking game
+        """
+        Process the given message, check if it is three characters long, and compare it against the answer.
+        """
+        
+        if message.author != bot.user:
+            if get_status(guild) and len(message.content) == 3:
+                correct = ""
+                if message.content == get_answer(guild):
+                    diff = time.perf_counter() - get_starttime(guild)
+                    min = math.floor(diff/60)
+                    sec = diff % 60
+                    #Add win to database leaderboard
+                    winner = message.author.id
+                    #insert
+                    guesses = str(get_guesses(guild))
+                    #dbMed.insert({'meditationNum': 1, 'meditationUser': f'{meditationUser}', 'meditationChannel': f'{meditationChannel}'})
+                    dbHackScore.insert({'User': f'{winner}', 'Guesses': f'{guesses}', 'time': f'{str(min)}:{int(sec)}'})
+                    await message.channel.send("Correct!\nTime taken: {}:{:0>2d}".format(str(min), int(sec)))
+                    update_status(guild, False)
+                else:
+                    charset = get_charset(guild)
+                    for i in range(3):
+                        char = message.content[i]
+                        if charset.find(char) != -1:
+                            for j in range(3):
+                                if message.content[i] == get_answer(guild)[j]:
+                                    if i == j:
+                                        correct = "".join([correct, "!"])
+                                    else:
+                                        correct = "".join([correct, "?"])
+                        else:
+                            await message.channel.send("Invalid character(s)!")
+                            return
+                    update_guesses(guild, get_guesses(guild) - 1)
+                    if get_guesses(guild) == 0:
+                        await message.channel.send("You have run out of guesses. The answer was: `{0}`".format(get_answer(guild)))
+                        update_status(guild, False)
+                        return
+                    correct = ("".join(sorted(correct)))[::-1] # reverse this string to fit with tachyons notation
+                    await message.channel.send("**[{0}]**\nGuesses left: {1}".format(correct, str(get_guesses(guild))))
+            await bot.process_commands(message)
+
+    # @bot.event
+    # async def on_message(message):
+
+    #     openseaAssetURL = "https://opensea.io/assets"
+    #     if openseaAssetURL in message.content:
+    #         #pull URL only from message
+    #         apiImageUrl = re.search("(?P<url>https?://[^\s]+)", message.content).group("url")
+    #         imgURL = get_NFT_image(apiImageUrl)
+    #         print(imgURL)
+    #         #print(message.channel)
+    #         await message.channel.send(f"{imgURL}")
+    #     await bot.process_commands(message)
+
+    @bot.command(name='hackhelp')
+    async def hackhelp(ctx):
+        await ctx.send("""```Guess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows/Wordle.
+    - !hack: start a new game   
+        - optional: number of turns, from 4 to 12
+    - !quit: quits current game
+    - !help: displays this message
+    '?' - right character, wrong place
+    '!' - right character, right place```""")
 
     @bot.command(pass_context=True, brief="Get Community map of our group !community {community id}")
     async def community(ctx):
@@ -208,7 +408,7 @@ def main(source, verbose=False):
 
         # The ID and range of a sample spreadsheet.
         SAMPLE_SPREADSHEET_ID = '1a6xZ2LfJAYj9G3lY7VxdGkyS-rqmSYUzjyXonMUGYow'
-        SAMPLE_RANGE_NAME = 'Data!A2:D'
+        SAMPLE_RANGE_NAME = 'Data-Land!A2:D'
 
         """Shows basic usage of the Sheets API.
         Prints values from a sample spreadsheet.
@@ -283,6 +483,34 @@ def main(source, verbose=False):
         #link = "complete"
         await ctx.send(link)
 
+    @bot.command(pass_context=True, brief="Get live animal population of !pop {community id}")
+    async def pop(ctx):
+        message = ctx.message.content
+        community = message.split("!pop ")
+        community = community[1]
+
+        embed = discord.Embed(title=f"Population of Community: {community}")
+
+        url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+
+        # store the response of URL
+        response = urlopen(url)
+  
+        # storing the JSON response 
+        # from url in data
+        data_json = json.loads(response.read())
+
+        data_json_as_string = dumps(data_json)
+        wolfCount = data_json_as_string.count('"WOLF"')
+        sheepCount = data_json_as_string.count('"SHEEP"')
+
+        # print the json response
+        #print(data_json)
+
+        embed.add_field(name=f"Sheep :", value=f"{sheepCount}", inline=False)
+        embed.add_field(name=f"Wolves :", value=f"{wolfCount}", inline=False)
+
+        await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Show meditation Leaderboard")
     async def meditatedScore(ctx):
@@ -298,6 +526,22 @@ def main(source, verbose=False):
 
 
         await ctx.send(embed=embed)
+
+    @bot.command(pass_context=True, brief="Show hack Leaderboard")
+    async def hackScore(ctx):
+
+        search = dbHackScore.all()
+        #print(search)
+
+        embed = discord.Embed(title=f"Hack Leaderboard")
+
+        for x in search:
+            user = await bot.fetch_user(x['User'])
+            embed.add_field(name=f"{user} :", value=f" Guesses: {x['Guesses']}", inline=False)
+            embed.add_field(name=f"{user} :", value=f" Time: {x['time']}", inline=False) 
+
+
+        await ctx.send(embed=embed)    
 
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
     async def projectStats(ctx):
@@ -429,7 +673,7 @@ def main(source, verbose=False):
     @bot.command(pass_context=True, brief="Get custom Token price")
     async def customToken(ctx):
         message = ctx.message.content
-
+    
         #trim end off
         trimmed = message.rstrip()
         #remove command
