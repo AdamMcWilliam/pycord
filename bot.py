@@ -565,6 +565,66 @@ def main(source, verbose=False):
 
         await ctx.send(embed=embed) 
 
+
+    @bot.command(pass_context=True, brief="Get the levels of a community !level {community id}")
+    async def level(ctx):
+        message = ctx.message.content
+        community = message.split("!level ")
+        community = community[1]
+
+        embed = discord.Embed(title=f"{community} Resource Ranks: ")
+
+        url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+
+        # store the response of URL
+        response = urlopen(url)
+  
+        # storing the JSON response 
+        # from url in data
+        data_json = json.loads(response.read())
+
+        # print the json response
+        #print(data_json)
+
+        resourceRanks = data_json['resourceRanks']
+
+        for i in resourceRanks:
+            typeName = i['type']
+            rank = i['currentRank']
+            embed.add_field(name=f"{typeName}", value=f"{rank}", inline=False)
+
+        await ctx.send(embed=embed) 
+
+    @bot.command(pass_context=True, brief="Get structures and stats of said structures by community !structures {community id}")
+    async def structures(ctx):
+        message = ctx.message.content
+        community = message.split("!structures ")
+        community = community[1]
+
+        embed = discord.Embed(title=f"{community} Structure Stats: ")
+
+        url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+
+        # store the response of URL
+        response = urlopen(url)
+  
+        # storing the JSON response 
+        # from url in data
+        data_json = json.loads(response.read())
+
+        # print the json response
+        #print(data_json)
+
+        lands = data_json['lands']
+
+        for l in lands:
+            if(l['buildingsAllowed'] == 1 and l['building'] != None):
+                print(l['id'])
+                print (l['building'])
+                embed.add_field(name=f"Land Id: {l['id']}", value=f"Type: {l['building']['type']} , Cost: {l['building']['fee']} $WOOL, Closed?: {l['building']['closed']}", inline=False)
+
+        await ctx.send(embed=embed) 
+
     @bot.command(pass_context=True, brief="Show meditation Leaderboard")
     async def meditatedScore(ctx):
 
