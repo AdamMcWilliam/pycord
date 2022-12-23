@@ -512,6 +512,59 @@ def main(source, verbose=False):
 
         await ctx.send(embed=embed)
 
+    @bot.command(pass_context=True, brief="Get current weather of community !weather {community id}")
+    async def weather(ctx):
+        message = ctx.message.content
+        community = message.split("!weather ")
+        community = community[1]
+
+        embed = discord.Embed(title=f"current {community} Weather: ")
+
+        url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+
+        # store the response of URL
+        response = urlopen(url)
+  
+        # storing the JSON response 
+        # from url in data
+        data_json = json.loads(response.read())
+
+        # print the json response
+        #print(data_json)
+
+        embed.add_field(name=f"Sheep :", value=f"{data_json['weather']}", inline=False)
+
+        await ctx.send(embed=embed)
+
+    @bot.command(pass_context=True, brief="Get weather forecast of community !forecast {community id}")
+    async def forecast(ctx):
+        message = ctx.message.content
+        community = message.split("!forecast ")
+        community = community[1]
+
+        embed = discord.Embed(title=f"{community} Weather Forecast: ")
+
+        url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+
+        # store the response of URL
+        response = urlopen(url)
+  
+        # storing the JSON response 
+        # from url in data
+        data_json = json.loads(response.read())
+
+        # print the json response
+        #print(data_json)
+
+        forecasts = data_json['forecast']
+
+        for i in forecasts:
+            date = i
+            weather = forecasts[i]
+            embed.add_field(name=f"{date}", value=f"{weather}", inline=False)
+
+        await ctx.send(embed=embed) 
+
     @bot.command(pass_context=True, brief="Show meditation Leaderboard")
     async def meditatedScore(ctx):
 
