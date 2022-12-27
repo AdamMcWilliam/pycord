@@ -623,7 +623,129 @@ def main(source, verbose=False):
                 print (l['building'])
                 embed.add_field(name=f"Land Id: {l['id']}", value=f"Type: {l['building']['type']} , Cost: {l['building']['fee']} $WOOL, Closed?: {l['building']['closed']}", inline=False)
 
-        await ctx.send(embed=embed) 
+        await ctx.send(embed=embed)
+    
+    @bot.command(pass_context=True, brief="Check whos animal this is !sheep {sheep id}")
+    async def sheep(ctx):
+        message = ctx.message.content
+        sheepId = message.split("!sheep ")
+        sheepId = sheepId[1]
+
+        url = f"https://opensea.io/assets/ethereum/0x7f36182dee28c45de6072a34d29855bae76dbe2f/{sheepId}"
+
+        await ctx.send(url)
+
+    @bot.command(pass_context=True, brief="Check whos animal this is !sheep {sheep id}")
+    async def structureStats(ctx):
+        denCount=0
+        denCost = 0
+
+        barnCount =0
+        barnCost =0
+
+        bathhouseCount = 0
+        bathhouseCost = 0
+
+        bathhousePeakCount =0
+        bathhousePeakCost = 0
+
+        for community in range (1,102):
+            url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+
+            # store the response of URL
+            response = urlopen(url)
+            # storing the JSON response 
+            # from url in data
+            data_json = json.loads(response.read())
+            # print the json response
+            #print(data_json
+            lands = data_json['lands']
+
+            for l in lands:
+                if(l['buildingsAllowed'] == 1 and l['building'] != None):
+                    #print(l['id'])
+                    #print (l['building'])
+                    #print(f"Land Id: {l['id']} , Type: {l['building']['type']} , Cost: {l['building']['fee']} $WOOL")
+                    if l['building']['type'] == "DEN":
+                        denCount +=1
+                        denCost += l['building']['fee']
+                    elif l['building']['type'] == "BATHHOUSE":
+                        if community != 101:
+                            bathhouseCount +=1
+                            bathhouseCost += l['building']['fee']
+                        else:
+                            bathhousePeakCount +=1
+                            bathhousePeakCost += l['building']['fee']                
+                    elif l['building']['type'] == "BARN":
+                        barnCount +=1
+                        barnCost += l['building']['fee']
+                    else:
+                        print("oops")
+
+        print(f"BARNS:{barnCount}  DENS:{denCount}  SHEEP BATH HOUSE COUNT:{bathhouseCount}   PEAK BATH HOUSE COUNT:{bathhousePeakCount}  TOTAL BATHHOUSES: {bathhousePeakCount+bathhouseCount}")
+
+        print(f"BARN AVG COST:{barnCost/barnCount}")
+        print(f"DEN AVG COST:{denCost/denCount}")
+        print(f'BATHHOUSE AVG COST:{bathhouseCost/bathhouseCount}')
+        print(f'BATHHOUSEPEAK AVG COST:{bathhousePeakCost/bathhousePeakCount}')
+
+        embed = discord.Embed(title=f"Structure Stats")
+        embed.add_field(name=f"Total Barns", value=f"{barnCount}", inline=False)
+        embed.add_field(name=f"Total Dens", value=f"{denCount}", inline=False)
+        embed.add_field(name=f"Total Sheep Bath Houses", value=f"{bathhouseCount}", inline=False)
+        embed.add_field(name=f"Total Wolf Bath Houses", value=f"{bathhousePeakCount}", inline=False)
+        embed.add_field(name=f"Total Bath Houses", value=f"{bathhousePeakCount + bathhouseCount}", inline=False)
+        embed.add_field(name=f"Barn Avg Cost", value=f"{barnCost/barnCount}", inline=False)
+        embed.add_field(name=f"Den Avg Cost", value=f"{denCost/denCount}", inline=False)
+        embed.add_field(name=f"SHEEP BATHHOUSE AVG COST", value=f"{bathhouseCost/bathhouseCount}", inline=False)
+        embed.add_field(name=f"PEAK BATHHOUSE AVG COST", value=f"{bathhousePeakCost/bathhousePeakCount}", inline=False)
+
+
+        await ctx.send(embed=embed)
+
+    @bot.command(pass_context=True, brief="Get Den closed vs open stats")
+    async def denStats(ctx):
+        denCount=0
+        denCost = 0
+        community = 101
+        denOpen = 0
+        denClosed = 0
+       
+        url = f"https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/community/{community}"
+        # store the response of URL
+        response = urlopen(url)
+        # storing the JSON response 
+        # from url in data
+        data_json = json.loads(response.read())
+        # print the json response
+        #print(data_json
+        lands = data_json['lands']
+
+        for l in lands:
+            if(l['buildingsAllowed'] == 1 and l['building'] != None):
+                #print(l['id'])
+                #print (l['building'])
+                #print(f"Land Id: {l['id']} , Type: {l['building']['type']} , Cost: {l['building']['fee']} $WOOL")
+                if l['building']['type'] == "DEN":
+                    denCount +=1
+                    denCost += l['building']['fee']
+
+                    if l['building']['closed'] == True:
+                        denClosed +=1
+                    else:
+                        denOpen +=1                
+
+        print(f"DEN AVG COST:{denCost/denCount}")
+    
+
+        embed = discord.Embed(title=f"Den Stats")
+        
+        embed.add_field(name=f"Total Dens", value=f"{denCount}", inline=False)
+        embed.add_field(name=f"Den Avg Cost", value=f"{denCost/denCount}", inline=False)
+        embed.add_field(name=f"Opens Dens", value=f"{denOpen}", inline=False)
+        embed.add_field(name=f"Closed Dens", value=f"{denClosed}", inline=False)
+
+        await ctx.send(embed=embed)
 
     @bot.command(pass_context=True, brief="Show meditation Leaderboard")
     async def meditatedScore(ctx):
@@ -639,6 +761,7 @@ def main(source, verbose=False):
 
 
         await ctx.send(embed=embed)
+        
 
     @bot.command(pass_context=True, brief="Show hack Leaderboard")
     async def hackScore(ctx):
