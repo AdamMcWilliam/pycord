@@ -323,7 +323,7 @@ def main(source, verbose=False):
 
                 price = tokenPrice(token,config)
                 embed = discord.Embed(title=f"Current {token} price")
-                embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=False) 
+                embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
 
                 await message.channel.send(embed=embed)
             #else:
@@ -507,8 +507,8 @@ def main(source, verbose=False):
         # print the json response
         #print(data_json)
 
-        embed.add_field(name=f"Sheep :", value=f"{sheepCount}", inline=False)
-        embed.add_field(name=f"Wolves :", value=f"{wolfCount}", inline=False)
+        embed.add_field(name=f"Sheep :", value=f"{sheepCount}", inline=True)
+        embed.add_field(name=f"Wolves :", value=f"{wolfCount}", inline=True)
 
         await ctx.send(embed=embed)
 
@@ -532,7 +532,7 @@ def main(source, verbose=False):
         # print the json response
         #print(data_json)
 
-        embed.add_field(name=f"Sheep :", value=f"{data_json['weather']}", inline=False)
+        embed.add_field(name=f"Sheep :", value=f"{data_json['weather']}", inline=True)
 
         await ctx.send(embed=embed)
 
@@ -561,7 +561,7 @@ def main(source, verbose=False):
         for i in forecasts:
             date = i
             weather = forecasts[i]
-            embed.add_field(name=f"{date}", value=f"{weather}", inline=False)
+            embed.add_field(name=f"{date}", value=f"{weather}", inline=True)
 
         await ctx.send(embed=embed) 
 
@@ -591,7 +591,7 @@ def main(source, verbose=False):
         for i in resourceRanks:
             typeName = i['type']
             rank = i['currentRank']
-            embed.add_field(name=f"{typeName}", value=f"{rank}", inline=False)
+            embed.add_field(name=f"{typeName}", value=f"{rank}", inline=True)
 
         await ctx.send(embed=embed) 
 
@@ -621,7 +621,7 @@ def main(source, verbose=False):
             if(l['buildingsAllowed'] == 1 and l['building'] != None):
                 print(l['id'])
                 print (l['building'])
-                embed.add_field(name=f"Land Id: {l['id']}", value=f"Type: {l['building']['type']} , Cost: {l['building']['fee']} $WOOL, Closed?: {l['building']['closed']}", inline=False)
+                embed.add_field(name=f"Land Id: {l['id']}", value=f"Type: {l['building']['type']} , Cost: {l['building']['fee']} $WOOL, Closed?: {l['building']['closed']}", inline=True)
 
         await ctx.send(embed=embed)
     
@@ -690,15 +690,15 @@ def main(source, verbose=False):
         print(f'BATHHOUSEPEAK AVG COST:{bathhousePeakCost/bathhousePeakCount}')
 
         embed = discord.Embed(title=f"Structure Stats")
-        embed.add_field(name=f"Total Barns", value=f"{barnCount}", inline=False)
-        embed.add_field(name=f"Total Dens", value=f"{denCount}", inline=False)
-        embed.add_field(name=f"Total Sheep Bath Houses", value=f"{bathhouseCount}", inline=False)
-        embed.add_field(name=f"Total Wolf Bath Houses", value=f"{bathhousePeakCount}", inline=False)
-        embed.add_field(name=f"Total Bath Houses", value=f"{bathhousePeakCount + bathhouseCount}", inline=False)
-        embed.add_field(name=f"Barn Avg Cost", value=f"{barnCost/barnCount}", inline=False)
-        embed.add_field(name=f"Den Avg Cost", value=f"{denCost/denCount}", inline=False)
-        embed.add_field(name=f"SHEEP BATHHOUSE AVG COST", value=f"{bathhouseCost/bathhouseCount}", inline=False)
-        embed.add_field(name=f"PEAK BATHHOUSE AVG COST", value=f"{bathhousePeakCost/bathhousePeakCount}", inline=False)
+        embed.add_field(name=f"Total Barns", value=f"{barnCount}", inline=True)
+        embed.add_field(name=f"Total Dens", value=f"{denCount}", inline=True)
+        embed.add_field(name=f"Total Sheep Bath Houses", value=f"{bathhouseCount}", inline=True)
+        embed.add_field(name=f"Total Wolf Bath Houses", value=f"{bathhousePeakCount}", inline=True)
+        embed.add_field(name=f"Total Bath Houses", value=f"{bathhousePeakCount + bathhouseCount}", inline=True)
+        embed.add_field(name=f"Barn Avg Cost", value=f"{barnCost/barnCount}", inline=True)
+        embed.add_field(name=f"Den Avg Cost", value=f"{denCost/denCount}", inline=True)
+        embed.add_field(name=f"SHEEP BATHHOUSE AVG COST", value=f"{bathhouseCost/bathhouseCount}", inline=True)
+        embed.add_field(name=f"PEAK BATHHOUSE AVG COST", value=f"{bathhousePeakCost/bathhousePeakCount}", inline=True)
 
 
         await ctx.send(embed=embed)
@@ -740,10 +740,10 @@ def main(source, verbose=False):
 
         embed = discord.Embed(title=f"Den Stats")
         
-        embed.add_field(name=f"Total Dens", value=f"{denCount}", inline=False)
-        embed.add_field(name=f"Den Avg Cost", value=f"{denCost/denCount}", inline=False)
-        embed.add_field(name=f"Opens Dens", value=f"{denOpen}", inline=False)
-        embed.add_field(name=f"Closed Dens", value=f"{denClosed}", inline=False)
+        embed.add_field(name=f"Total Dens", value=f"{denCount}", inline=True)
+        embed.add_field(name=f"Den Avg Cost", value=f"{denCost/denCount}", inline=True)
+        embed.add_field(name=f"Opens Dens", value=f"{denOpen}", inline=True)
+        embed.add_field(name=f"Closed Dens", value=f"{denClosed}", inline=True)
 
         await ctx.send(embed=embed)
 
@@ -757,7 +757,7 @@ def main(source, verbose=False):
 
         for x in search:
             user = await bot.fetch_user(x['meditationUser'])
-            embed.add_field(name=f"{user} :", value=f"{x['meditationNum']}", inline=False) 
+            embed.add_field(name=f"{user} :", value=f"{x['meditationNum']}", inline=True) 
 
 
         await ctx.send(embed=embed)
@@ -773,8 +773,8 @@ def main(source, verbose=False):
 
         for x in search:
             user = await bot.fetch_user(x['User'])
-            embed.add_field(name=f"{user} :", value=f" Guesses: {x['Guesses']}", inline=False)
-            embed.add_field(name=f"{user} :", value=f" Time: {x['time']}", inline=False) 
+            embed.add_field(name=f"{user} :", value=f" Guesses: {x['Guesses']}", inline=True)
+            embed.add_field(name=f"{user} :", value=f" Time: {x['time']}", inline=True) 
 
 
         await ctx.send(embed=embed)    
@@ -877,7 +877,7 @@ def main(source, verbose=False):
     async def ape(ctx):
         price = tokenPrice('APE',config)
         embed = discord.Embed(title="<:apecoin:954387364824899665> Current APE price")
-        embed.add_field(name=f"1 $APE = ", value=f"${price}", inline=False) 
+        embed.add_field(name=f"1 $APE = ", value=f"${price}", inline=True) 
     
         await ctx.send(embed=embed)
 
@@ -885,7 +885,7 @@ def main(source, verbose=False):
     async def wool(ctx):
         price = tokenPrice('WOOL',config)
         embed = discord.Embed(title=":sheep: Current wool price")
-        embed.add_field(name=f"1 $WOOL = ", value=f"${price}", inline=False) 
+        embed.add_field(name=f"1 $WOOL = ", value=f"${price}", inline=True) 
     
         await ctx.send(embed=embed)
 
@@ -893,7 +893,7 @@ def main(source, verbose=False):
     async def cfti(ctx):
         price = tokenPrice('CFTI',config)
         embed = discord.Embed(title="<:raidparty:939195769024557186> Current CFTI price")
-        embed.add_field(name=f"1 $CFTI = ", value=f"${price}", inline=False) 
+        embed.add_field(name=f"1 $CFTI = ", value=f"${price}", inline=True) 
     
         await ctx.send(embed=embed)
 
@@ -902,7 +902,7 @@ def main(source, verbose=False):
     async def looks(ctx):
         price = tokenPrice('LOOKS',config)
         embed = discord.Embed(title=":eyes: Current LOOKS price")
-        embed.add_field(name=f"1 LOOKS = ", value=f"${price}", inline=False) 
+        embed.add_field(name=f"1 LOOKS = ", value=f"${price}", inline=True) 
     
         await ctx.send(embed=embed)
 
@@ -920,7 +920,7 @@ def main(source, verbose=False):
 
         price = tokenPrice(token,config)
         embed = discord.Embed(title=f"Current {token} price")
-        embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=False) 
+        embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
     
         await ctx.send(embed=embed)
 
@@ -933,21 +933,21 @@ def main(source, verbose=False):
                 config['ethgasstationKey'],
                 verbose=verbose)
             embed.add_field(name=f"Slow :turtle: | {slowWait} seconds", value=f"{round(float(slow), 1)} Gwei",
-                            inline=False)
+                            inline=True)
             embed.add_field(name=f"Average :person_walking: | {avgWait} seconds",
-                            value=f"{round(float(average), 1)} Gwei", inline=False)
+                            value=f"{round(float(average), 1)} Gwei", inline=True)
             embed.add_field(name=f"Fast :race_car: | {fastWait} seconds", value=f"{round(float(fast), 1)} Gwei",
-                            inline=False)
+                            inline=True)
             embed.add_field(name=f"Quick :zap: | {fastestWait} seconds", value=f"{round(float(fastest), 1)} Gwei",
-                            inline=False)
+                            inline=True)
         else:
             if source == 'etherscan':
                 fast, average, slow = get_gas_from_etherscan(config['etherscanKey'], verbose=verbose)
             else:
                 fast, average, slow = get_gas_from_gasnow(verbose=verbose)
-            embed.add_field(name=f"Slow :turtle:", value=f"{slow} Gwei", inline=False)
-            embed.add_field(name=f"Average :person_walking:", value=f"{average} Gwei", inline=False)
-            embed.add_field(name=f"Fast :zap:", value=f"{fast} Gwei", inline=False)
+            embed.add_field(name=f"Slow :turtle:", value=f"{slow} Gwei", inline=True)
+            embed.add_field(name=f"Average :person_walking:", value=f"{average} Gwei", inline=True)
+            embed.add_field(name=f"Fast :zap:", value=f"{fast} Gwei", inline=True)
         embed.set_footer(text=f"Fetched from {source}\nUse help to get the list of commands")
         embed.set_author(name='{0.display_name}'.format(ctx.author),
             icon_url='{0.avatar.url}'.format(ctx.author)
@@ -1000,12 +1000,12 @@ def main(source, verbose=False):
             help_embed.add_field(
                 name="Command Prefix",
                 value="`!`",
-                inline=False)
+                inline=True)
             help_embed.add_field(
                 name="List of supported commands:",
                 value="```" + "\n".join(['{:>2}. {:<14}{}'.format(str(i + 1), x.name, x.brief) for i, x in
                                          enumerate(command_list)]) + "```",
-                inline=False
+                inline=True
             )
         else:
             help_embed.add_field(
@@ -1078,7 +1078,7 @@ def main(source, verbose=False):
             embed = discord.Embed(title=":fuelpump: GasPing Logged")
 
             fast, average, slow = get_gas_from_etherscan(config['etherscanKey'],verbose=verbose)
-            embed.add_field(name=f"I'll let you know when it hits ", value=f"{gasNum} Gwei", inline=False)
+            embed.add_field(name=f"I'll let you know when it hits ", value=f"{gasNum} Gwei", inline=True)
             embed.set_footer(text=f"Fetched from {source}\nUse help to get the list of commands")
             embed.set_author(
                 name='{0.display_name}'.format(ctx.author),
