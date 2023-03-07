@@ -41,6 +41,7 @@ from googleapiclient.errors import HttpError
 from urllib.request import urlopen
 from json import dumps
 
+
 conn = sqlite3.connect('bot.db')
 c = conn.cursor()
 c.execute("""CREATE TABLE IF NOT EXISTS games(
@@ -58,6 +59,17 @@ table = Query()
 dbMed = TinyDB('meddb.json')
 dbHackScore = TinyDB('hackScore.json')
 
+
+def p5js_to_image(sketch):
+    #remove last }
+    sketch = sketch[:-1]
+    # Create a new Python file and write some code to it
+    with open("p5Output.py", "w") as f:
+        f.write('import p5 \n' + sketch + '\n save("result.png")}')
+
+    # Run the newly created Python file
+    os.system("p5Output.py")
+    
 
 def get_NFT_image(url):
     ##givenURL will look like https://opensea.io/assets/0x10064373e248bc7253653ca05df73cf226202956/11211
@@ -384,6 +396,20 @@ def main(source, verbose=False):
     #         #print(message.channel)
     #         await message.channel.send(f"{imgURL}")
     #     await bot.process_commands(message)
+
+    @bot.command(name='p5js')
+    async def p5js(ctx):
+        message = ctx.message.content
+        message = message.split("!p5js ")
+        message = message[1]
+
+        p5js_to_image(message)
+        time.sleep(3)
+        
+        with open('result.png', 'rb') as f:
+            picture = discord.File(f)
+            await message.channel.send(file=picture)
+
 
     @bot.command(name='hackhelp')
     async def hackhelp(ctx):
@@ -790,6 +816,11 @@ def main(source, verbose=False):
 
         await ctx.send(projectGraphUrl)
 
+    @bot.command(pass_context=True, brief="get list of servers bot is in")
+    async def servers(ctx):
+        servers = list(bot.guilds)
+        await ctx.send(f"Connected on {str(len(servers))} servers:")
+        await ctx.send('\n'.join(guild.name for guild in servers))
 
     @bot.command(pass_context=True, brief="random artmatt FB post")
     async def randomArtmatt(ctx):
