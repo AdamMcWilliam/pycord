@@ -320,11 +320,14 @@ def main(source, verbose=False):
                 
                 # if message.startswith("$") and len(message) <= 5:
 
-                #trim end off
+                #trim whitespace off end
                 trimmed = message.content.rstrip()
                 #remove command
                 token = trimmed.split("$")
                 token = token[1]
+                #split again for amount
+                amount = token.split(token)
+                amount = token[1]
                 token = token.upper()
                 print(token)
 
@@ -336,7 +339,11 @@ def main(source, verbose=False):
                 price = tokenPrice(token,config)
                 embed = discord.Embed(title=f"Current {token} price")
                 embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
-
+                
+                if(amount!=""):
+                    print(amount)
+                    embed.add_field(name=f"{amount} {token} = ", value=f"${price*amount}", inline=True)
+                    
                 await message.channel.send(embed=embed)
             #else:
                 #await message.channel.send("nope")
