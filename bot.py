@@ -320,7 +320,8 @@ def main(source, verbose=False):
                 
                 # if message.startswith("$") and len(message) <= 5:
             
-                text = message.content.split(" ")
+                text = message
+                text = text.content.split(" ")
                 print(text)
                 if(len(text)>1):
                     amount = text[1]
@@ -345,7 +346,7 @@ def main(source, verbose=False):
                 
                 if(amount!=0):
                     print(amount)
-                    embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*int(amount)}", inline=True)
+                    embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
                     
                 await message.channel.send(embed=embed)
             #else:
