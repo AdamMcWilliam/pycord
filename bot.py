@@ -322,7 +322,7 @@ def main(source, verbose=False):
             
                 message = message.content.split(" ")
                 print(message)
-                if(message[1] != ""):
+                if(message[1]):
                     amount = message[1]
                 else:
                     amount = 0  
@@ -332,7 +332,7 @@ def main(source, verbose=False):
                 token = token[1]
                 token = token.upper()
                 print(token)
-                print(amount)
+                #print(amount)
 
                 # 2. Load config
                 filename = 'config.yaml'
