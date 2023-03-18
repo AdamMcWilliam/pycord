@@ -322,7 +322,7 @@ def main(source, verbose=False):
             
                 message = message.content.split(" ")
                 print(message)
-                if(message[1]):
+                if(len(message)>1):
                     amount = message[1]
                 else:
                     amount = 0  
@@ -345,7 +345,7 @@ def main(source, verbose=False):
                 
                 if(amount!=0):
                     print(amount)
-                    embed.add_field(name=f"{amount} {token} = ", value=f"${price*amount}", inline=True)
+                    embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*amount}", inline=True)
                     
                 await message.channel.send(embed=embed)
             #else:
