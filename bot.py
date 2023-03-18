@@ -316,7 +316,7 @@ def main(source, verbose=False):
         #tokenPrice
 
         if message.author != bot.user:
-            if len(message.content) <= 6 and message.content.startswith("$"):
+            if len((message.content.split(" ")[0])) <= 6 and message.content.startswith("$"):
                 
                 # if message.startswith("$") and len(message) <= 5:
             
