@@ -319,17 +319,19 @@ def main(source, verbose=False):
             if len(message.content) <= 6 and message.content.startswith("$"):
                 
                 # if message.startswith("$") and len(message) <= 5:
-
-                #trim whitespace off end
-                trimmed = message.content.rstrip()
+            
+                message = message.content.split(" ")
+                if(message[1] != ""):
+                    amount = message[1]
+                else:
+                    amount = 0  
                 #remove command
-                token = trimmed.split("$")
+                token = message[0]
+                token = token.split("$")
                 token = token[1]
-                #split again for amount
-                amount = token.split(token)
-                amount = token[1]
                 token = token.upper()
                 print(token)
+                print(amount)
 
                 # 2. Load config
                 filename = 'config.yaml'
@@ -340,7 +342,7 @@ def main(source, verbose=False):
                 embed = discord.Embed(title=f"Current {token} price")
                 embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
                 
-                if(amount!=""):
+                if(amount!=0):
                     print(amount)
                     embed.add_field(name=f"{amount} {token} = ", value=f"${price*amount}", inline=True)
                     
