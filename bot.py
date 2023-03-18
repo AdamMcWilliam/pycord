@@ -321,6 +321,7 @@ def main(source, verbose=False):
                 # if message.startswith("$") and len(message) <= 5:
             
                 message = message.content.split(" ")
+                print(message)
                 if(message[1] != ""):
                     amount = message[1]
                 else:
