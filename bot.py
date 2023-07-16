@@ -833,10 +833,12 @@ def main(source, verbose=False):
         for line in lines:
             if line.startswith('optInStart:'):
                 opt_in_start = line.split(':')[1].strip()
+                opt_in_start = datetime.fromisoformat(opt_in_start[:-1])
                 opt_in_start = datetime.strptime(opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
                 opt_in_start = int(opt_in_start.timestamp())
             elif line.startswith('startsAt:'):
                 starts_at = line.split(':')[1].strip()
+                starts_at = datetime.fromisoformat(starts_at[:-1])
                 starts_at = datetime.strptime(starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
                 starts_at = int(starts_at.timestamp())
             elif line.startswith('game:'):
