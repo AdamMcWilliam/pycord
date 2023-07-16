@@ -832,11 +832,11 @@ def main(source, verbose=False):
         # Iterate over each line and extract the values
         for line in lines:
             if line.startswith('optInStart:'):
-                opt_in_start = line.split(':')[1].strip()
+                opt_in_start = line.split(':')[0].strip()
                 print(opt_in_start)
                 opt_in_start = int(parse(opt_in_start).timestamp())
             elif line.startswith('startsAt:'):
-                starts_at = line.split(':')[1].strip()
+                starts_at = line.split(':')[0].strip()
                 starts_at = int(parse(starts_at).timestamp())
             elif line.startswith('game:'):
                 game = line.split(':')[1].strip()
