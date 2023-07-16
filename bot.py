@@ -40,6 +40,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from urllib.request import urlopen
 from json import dumps
+import datetime
 
 
 conn = sqlite3.connect('bot.db')
@@ -832,12 +833,17 @@ def main(source, verbose=False):
         for line in lines:
             if line.startswith('optInStart:'):
                 opt_in_start = line.split(':')[1].strip()
+                opt_in_start = datetime.strptime(opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+                opt_in_start = int(opt_in_start.timestamp())
             elif line.startswith('startsAt:'):
                 starts_at = line.split(':')[1].strip()
+                starts_at = datetime.strptime(starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+                starts_at = int(starts_at.timestamp())
             elif line.startswith('game:'):
                 game = line.split(':')[1].strip()
 
-        await ctx.send(game)    
+        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}>"
+        await ctx.send(message)    
 
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
     async def projectStats(ctx):
