@@ -40,7 +40,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from urllib.request import urlopen
 from json import dumps
-import datetime
+from datetime import datetime
 
 
 conn = sqlite3.connect('bot.db')
