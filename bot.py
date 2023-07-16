@@ -831,17 +831,20 @@ def main(source, verbose=False):
 
         # Iterate over each line and extract the values
         for line in lines:
-            if line.startswith('optInStart:'):
+            if line.startswith('game:'):
+                game = line.split(': ')[1].strip()
+            if game == "'None'":
+                game = "No Game Scheduled"
+                opt_in_start = "N/A"
+                starts_at = "N/A"
+                break
+            elif line.startswith('optInStart:'):
                 opt_in_start = line.split(': ')[1].strip()
                 print(opt_in_start)
-                if opt_in_start != 'None':
-                    opt_in_start = int(parse(opt_in_start).timestamp())
+                opt_in_start = int(parse(opt_in_start).timestamp())
             elif line.startswith('startsAt:'):
                 starts_at = line.split(': ')[1].strip()
-                if starts_at != 'None':
-                    starts_at = int(parse(starts_at).timestamp())
-            elif line.startswith('game:'):
-                game = line.split(': ')[1].strip()
+                starts_at = int(parse(starts_at).timestamp())
 
         message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}>"
         await ctx.send(message)    
