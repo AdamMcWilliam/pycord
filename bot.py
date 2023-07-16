@@ -821,7 +821,7 @@ def main(source, verbose=False):
         url = "http://192.168.1.25:8000/peak-game.txt"
         response = requests.get(url)
         # Split the string by newlines to get individual lines
-        lines = response.split('\n')
+        lines = response.text.split('\n')
 
         # Initialize variables
         opt_in_start = None
