@@ -834,10 +834,12 @@ def main(source, verbose=False):
             if line.startswith('optInStart:'):
                 opt_in_start = line.split(': ')[1].strip()
                 print(opt_in_start)
-                opt_in_start = int(parse(opt_in_start).timestamp())
+                if opt_in_start != 'None':
+                    opt_in_start = int(parse(opt_in_start).timestamp())
             elif line.startswith('startsAt:'):
                 starts_at = line.split(': ')[1].strip()
-                starts_at = int(parse(starts_at).timestamp())
+                if starts_at != 'None':
+                    starts_at = int(parse(starts_at).timestamp())
             elif line.startswith('game:'):
                 game = line.split(': ')[1].strip()
 
