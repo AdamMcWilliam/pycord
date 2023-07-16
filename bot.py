@@ -814,7 +814,30 @@ def main(source, verbose=False):
             embed.add_field(name=f"{user} :", value=f" Time: {x['time']}", inline=True) 
 
 
-        await ctx.send(embed=embed)    
+        await ctx.send(embed=embed)
+
+    @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
+    async def nextGame(ctx):
+        url = "http://192.168.1.25:8000/peak-game.txt"
+        response = requests.get(url)
+        # Split the string by newlines to get individual lines
+        lines = response.split('\n')
+
+        # Initialize variables
+        opt_in_start = None
+        starts_at = None
+        game = None
+
+        # Iterate over each line and extract the values
+        for line in lines:
+            if line.startswith('optInStart:'):
+                opt_in_start = line.split(':')[1].strip()
+            elif line.startswith('startsAt:'):
+                starts_at = line.split(':')[1].strip()
+            elif line.startswith('game:'):
+                game = line.split(':')[1].strip()
+
+        await ctx.send(game)    
 
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
     async def projectStats(ctx):
