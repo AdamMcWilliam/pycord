@@ -828,6 +828,7 @@ def main(source, verbose=False):
         opt_in_start = None
         starts_at = None
         game = None
+        levels = None
 
         # Iterate over each line and extract the values
         for line in lines:
@@ -845,8 +846,10 @@ def main(source, verbose=False):
             elif line.startswith('startsAt:'):
                 starts_at = line.split(': ')[1].strip()
                 starts_at = int(parse(starts_at).timestamp())
+            elif line.startswith('levels:'):
+                levels = line.split(': ')[1].strip()
 
-        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}>"
+        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start} with open levels {levels}>"
         await ctx.send(message)    
 
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
