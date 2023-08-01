@@ -849,7 +849,7 @@ def main(source, verbose=False):
             elif line.startswith('levels:'):
                 levels = line.split(': ')[1].strip()
 
-        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start} with open levels {levels}>"
+        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
         await ctx.send(message)    
 
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
