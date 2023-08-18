@@ -819,7 +819,7 @@ def main(source, verbose=False):
 
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextGame(ctx):
-        url = "http://192.168.1.25:8000/peak-game.txt"
+        url = "http://192.168.1.22:8000/peak-game.txt"
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('\n')
