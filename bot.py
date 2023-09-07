@@ -1077,7 +1077,7 @@ def main(source, verbose=False):
                 print (message)
                 await channel.send(message)
             if current_time == pre_startTime:
-                message = f"A new round of <@&{pre_alertRole}> has been created! The game begins at <t:{pre_starts_at}> and opt in starts at <t:{pre_opt_in_start}> with open levels: {pre_levels}"
+                message = f"A new round of <@&{curr_alertRole}> has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
                 print (message)
                 await channel.send(message)
             
