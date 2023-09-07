@@ -1341,8 +1341,9 @@ def main(source, verbose=False):
             
 
             current_time = datetime.datetime.now()
+            print(f"currentTime: {current_time}")
             #if current time is 51 mins
-            if current_time.minute >= 51 and messageSent == False:
+            if current_time.minute >= 50 and messageSent == False:
                 await getPeakGame()
             #elif current time is on the hour
             elif current_time.minute == 0 and messageSent == False:
