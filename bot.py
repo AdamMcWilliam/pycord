@@ -1300,14 +1300,12 @@ def main(source, verbose=False):
                     raise NotImplemented('Unsupported source')
                 # 4. Feed it to the bot
                 await send_update(*gweiList)
-                await getPeakGame()
+                
             except Exception as exc:
                 logger.error(exc)
                 continue
 
-        #every 3 hrs
-        #await asyncio.sleep(10800)  # in seconds
-        
+            await getPeakGame()
 
     bot.run(config['discordBotKey'])
 
