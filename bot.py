@@ -983,8 +983,27 @@ def main(source, verbose=False):
             elif line.startswith('levels:'):
                 levels = line.split(': ')[1].strip()
 
-        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
-        print (message)
+        #switch case on game
+        if game == "WOLF-WITS":
+            alertRole = "wolfwits"
+        elif game == "WATER-WALL":
+            alertRole = "waterwall"
+        elif game == "TUG-OF-WOOL":
+            alertRole = "tugofwool"
+        else:
+            alertRole = ""
+           
+               
+        if alertRole != "":
+
+            message = f"@<{alertRole}> at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+            print (message)
+
+            #send to irlalpha wolf-game channel
+            #channel = bot.get_channel(969249236464050187)
+            #test channel
+            channel = bot.get_channel(1081472865360171090)
+            await channel.send(message)
 
         peakHrs = 40
         #peakHrs = (config['peakFreq'] * 60) *60
