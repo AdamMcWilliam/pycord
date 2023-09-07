@@ -985,7 +985,7 @@ def main(source, verbose=False):
 
         #switch case on game
         if game == "WOLF_WITS":
-            alertRole = "wolfwits"
+            alertRole = 1149156059131424888
         elif game == "WATER_WALL":
             alertRole = "waterwall"
         elif game == "TUG_OF_WOOL":
@@ -996,7 +996,7 @@ def main(source, verbose=False):
                
         if alertRole != "":
 
-            message = f"@<{alertRole}> at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+            message = f"@<&{alertRole}> at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
             print (message)
 
             #send to irlalpha wolf-game channel
