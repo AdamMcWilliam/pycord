@@ -984,11 +984,11 @@ def main(source, verbose=False):
                 levels = line.split(': ')[1].strip()
 
         #switch case on game
-        if game == "WOLF-WITS":
+        if game == "WOLF_WITS":
             alertRole = "wolfwits"
-        elif game == "WATER-WALL":
+        elif game == "WATER_WALL":
             alertRole = "waterwall"
-        elif game == "TUG-OF-WOOL":
+        elif game == "TUG_OF_WOOL":
             alertRole = "tugofwool"
         else:
             alertRole = ""
