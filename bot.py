@@ -1006,6 +1006,9 @@ def main(source, verbose=False):
             #test channel
             channel = bot.get_channel(1081472865360171090)
 
+            print(f'OPT TIME {optTime}')
+            print(f'START TIME {startTime}')
+
             # Get the current time as a datetime object
             current_time = datetime.datetime.utcnow()
             print(current_time)
