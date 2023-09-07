@@ -992,11 +992,14 @@ def main(source, verbose=False):
 
         #switch case on game
         if game == "WOLF_WITS":
-            alertRole = 1149156059131424888
+            #alertRole = 1149156059131424888
+            alertRole = 1149152050391822336
         elif game == "WATER_WALL":
-            alertRole = 1149168100168704120
+            #alertRole = 1149168100168704120
+            alertRole = 1149151491211411567
         elif game == "TUG_OF_WOOL":
-            alertRole = 1149168129507872769
+            #alertRole = 1149168129507872769
+            alertRole = 1149152166586626128
         else:
             alertRole = ""
            
@@ -1004,16 +1007,16 @@ def main(source, verbose=False):
         if alertRole != "":
 
             #send to irlalpha wolf-game channel
-            #channel = bot.get_channel(969249236464050187)
+            channel = bot.get_channel(969249236464050187)
             #test channel
-            channel = bot.get_channel(1081472865360171090)
+            #channel = bot.get_channel(1081472865360171090)
 
             print(f'OPT TIME {optTime}')
             print(f'START TIME {startTime}')
 
             # Get the current time as a datetime object
             current_time = datetime.datetime.utcnow()
-            current_time = current_time + datetime.timedelta(hours=1)
+            #current_time = current_time + datetime.timedelta(hours=1)
             # get just hrs and mins
             current_time = current_time.strftime("%H:%M")
             print(current_time)
