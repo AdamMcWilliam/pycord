@@ -978,12 +978,14 @@ def main(source, verbose=False):
                 break
             elif line.startswith('optInStart:'):
                 opt_in_start = line.split(': ')[1].strip()
-                optTime = datetime.datetime.strptime(opt_in_start, "%H:%M")
+                optTime = datetime.datetime.strptime(opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+                optTime = optTime.strftime("%H:%M")
                 #print(opt_in_start)
                 opt_in_start = int(parse(opt_in_start).timestamp())
             elif line.startswith('startsAt:'):
                 starts_at = line.split(': ')[1].strip()
-                startTime = datetime.datetime.strptime(starts_at, "%H:%M")
+                startTime  = datetime.datetime.strptime(starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+                startTime = startTime.strftime("%H:%M")
                 starts_at = int(parse(starts_at).timestamp())
             elif line.startswith('levels:'):
                 levels = line.split(': ')[1].strip()
