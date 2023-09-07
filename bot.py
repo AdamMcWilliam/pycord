@@ -1019,7 +1019,7 @@ def main(source, verbose=False):
             print(current_time)
 
             if current_time == optTime:
-                message = f"OPT FOR <@&{alertRole}> at <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
+                message = f"OPT FOR <@&{alertRole}> NOW <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
                 print (message)
                 await channel.send(message)
             if current_time == startTime:
