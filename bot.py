@@ -951,6 +951,46 @@ def main(source, verbose=False):
 
         await asyncio.sleep(config['updateFreq'])  # in seconds
 
+
+    async def getPeakGame():
+        url = config['peakGameUrl']
+        response = requests.get(url)
+        # Split the string by newlines to get individual lines
+        lines = response.text.split('\n')
+
+        # Initialize variables
+        opt_in_start = None
+        starts_at = None
+        game = None
+        levels = None
+
+        # Iterate over each line and extract the values
+        for line in lines:
+            if line.startswith('game:'):
+                game = line.split(': ')[1].strip()
+            if game == "'None'":
+                game = "No Game Scheduled"
+                opt_in_start = "N/A"
+                starts_at = "N/A"
+                break
+            elif line.startswith('optInStart:'):
+                opt_in_start = line.split(': ')[1].strip()
+                print(opt_in_start)
+                opt_in_start = int(parse(opt_in_start).timestamp())
+            elif line.startswith('startsAt:'):
+                starts_at = line.split(': ')[1].strip()
+                starts_at = int(parse(starts_at).timestamp())
+            elif line.startswith('levels:'):
+                levels = line.split(': ')[1].strip()
+
+        message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+        print (message)
+
+        peakHrs = 40
+        #peakHrs = (config['peakFreq'] * 60) *60
+        await asyncio.sleep(peakHrs)  # in seconds
+
+
     @bot.command(pass_context=True, brief="Get APE price")
     async def ape(ctx):
         price = tokenPrice('APE',config)
@@ -1260,9 +1300,14 @@ def main(source, verbose=False):
                     raise NotImplemented('Unsupported source')
                 # 4. Feed it to the bot
                 await send_update(*gweiList)
+                await getPeakGame()
             except Exception as exc:
                 logger.error(exc)
                 continue
+
+        #every 3 hrs
+        #await asyncio.sleep(10800)  # in seconds
+        
 
     bot.run(config['discordBotKey'])
 
