@@ -1001,38 +1001,41 @@ def main(source, verbose=False):
         if game == "WOLF_WITS":
             alertRole = 1149156059131424888
         elif game == "WATER_WALL":
-            alertRole = "waterwall"
+            alertRole = 1149168100168704120
         elif game == "TUG_OF_WOOL":
-            alertRole = "tugofwool"
+            alertRole = 1149168129507872769
         else:
             alertRole = ""
            
                
         if alertRole != "":
 
-            
-            if is_current_time_in_array(optTimesGMT):
-                message = f"OPT FOR <@&{alertRole}> at <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
-                print (message)
-            if is_current_time_in_array(gameCreated):
-                message = f"A new round of <@&{alertRole}> has been created! The game begins at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
-                print (message)
-            
-            
-
             #send to irlalpha wolf-game channel
             #channel = bot.get_channel(969249236464050187)
             #test channel
             channel = bot.get_channel(1081472865360171090)
-            await channel.send(message)
-            messageSent = True 
+
+            if is_current_time_in_array(optTimesGMT):
+                message = f"OPT FOR <@&{alertRole}> at <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
+                print (message)
+                await channel.send(message)
+            if is_current_time_in_array(gameCreated):
+                message = f"A new round of <@&{alertRole}> has been created! The game begins at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+                print (message)
+                await channel.send(message)
+            
+            
+
+            
+            
+           
 
         peakHrs = 40
         #peakHrs = (config['peakFreq'] * 60) *60
 
         
         await asyncio.sleep(peakHrs)  # in seconds
-        messageSent = False
+       
 
 
     @bot.command(pass_context=True, brief="Get APE price")
