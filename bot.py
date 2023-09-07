@@ -11,7 +11,6 @@ import os
 import string
 import random
 import sqlite3
-import time
 import math
 import logging
 import yaml
@@ -21,7 +20,9 @@ import asyncio
 from discord.ext.commands import Bot
 import argparse
 import requests
+import schedule
 import time
+import datetime
 from tinydb import TinyDB, Query
 from tinydb.operations import delete
 from tinydb import where
@@ -41,6 +42,7 @@ from googleapiclient.errors import HttpError
 from urllib.request import urlopen
 from json import dumps
 from dateutil.parser import parse
+
 
 
 conn = sqlite3.connect('bot.db')
@@ -996,18 +998,30 @@ def main(source, verbose=False):
                
         if alertRole != "":
 
-            message = f"<@&{alertRole}> at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
-            print (message)
+            current_time = datetime.datetime.now()
+            print(f"currentTime: {current_time}")
+            if(current_time.min >50 and current_time.min <59):
+                message = f"OPT FOR <@&{alertRole}> at <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
+                print (message)
+            else:
+                message = f"A new round of <@&{alertRole}> has been created! The game begins at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+                print (message)
+            
+            
 
             #send to irlalpha wolf-game channel
             #channel = bot.get_channel(969249236464050187)
             #test channel
             channel = bot.get_channel(1081472865360171090)
             await channel.send(message)
+            messageSent = True 
 
         peakHrs = 40
         #peakHrs = (config['peakFreq'] * 60) *60
+
+        
         await asyncio.sleep(peakHrs)  # in seconds
+        messageSent = False
 
 
     @bot.command(pass_context=True, brief="Get APE price")
@@ -1299,6 +1313,7 @@ def main(source, verbose=False):
     @bot.event
     async def on_ready():
 
+        messageSent = False
 
         """
         When discord client is ready
@@ -1322,9 +1337,16 @@ def main(source, verbose=False):
                 
             except Exception as exc:
                 logger.error(exc)
-                continue
+                continue    
+            
 
-            await getPeakGame()
+            current_time = datetime.datetime.now()
+            #if current time is 51 mins
+            if current_time.minute >= 51 and messageSent == False:
+                await getPeakGame()
+            #elif current time is on the hour
+            elif current_time.minute == 0 and messageSent == False:
+                await getPeakGame()
 
     bot.run(config['discordBotKey'])
 
