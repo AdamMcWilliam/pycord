@@ -955,6 +955,18 @@ def main(source, verbose=False):
 
 
     async def getPeakGame():
+
+        optTimesGMT = ["1:50 AM", "4:50 AM", "7:50 AM", "10:50 AM", "1:50 PM", "4:50 PM", "7:50 PM", "10:50 PM"]
+        gameCreated = ["2:01 AM", "5:01 AM", "8:01 AM", "11:01 AM", "2:01 PM", "5:01 PM", "8:01 PM", "11:01 PM"]
+
+        # Function to check if the current time matches any of the times in the array
+        def is_current_time_in_array(array_of_times):
+            current_time = time.strftime("%I:%M %p")
+            print(f'{current_time}')
+            return current_time in array_of_times
+
+
+
         url = config['peakUrl']
         response = requests.get(url)
         # Split the string by newlines to get individual lines
@@ -998,12 +1010,11 @@ def main(source, verbose=False):
                
         if alertRole != "":
 
-            current_time = datetime.datetime.now()
-            print(f"currentTime: {current_time}")
-            if(current_time.min >50 and current_time.min <59):
+            
+            if is_current_time_in_array(optTimesGMT):
                 message = f"OPT FOR <@&{alertRole}> at <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
                 print (message)
-            else:
+            if is_current_time_in_array(gameCreated):
                 message = f"A new round of <@&{alertRole}> has been created! The game begins at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
                 print (message)
             
@@ -1339,15 +1350,8 @@ def main(source, verbose=False):
                 logger.error(exc)
                 continue    
             
-
-            current_time = datetime.datetime.now()
-            print(f"currentTime: {current_time}")
-            #if current time is 51 mins
-            if current_time.minute >= 50 and messageSent == False:
-                await getPeakGame()
-            #elif current time is on the hour
-            elif current_time.minute == 0 and messageSent == False:
-                await getPeakGame()
+            await getPeakGame()
+            
 
     bot.run(config['discordBotKey'])
 
