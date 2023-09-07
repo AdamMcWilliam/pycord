@@ -1011,6 +1011,7 @@ def main(source, verbose=False):
 
             # Get the current time as a datetime object
             current_time = datetime.datetime.utcnow()
+            current_time = current_time + datetime.timedelta(hours=1)
             print(current_time)
 
             if current_time == optTime:
