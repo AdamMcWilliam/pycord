@@ -956,63 +956,114 @@ def main(source, verbose=False):
 
     async def getPeakGame():
 
-        url = config['peakUrl']
-        response = requests.get(url)
-        # Split the string by newlines to get individual lines
-        lines = response.text.split('\n')
+        urlCurrent = config['peakUrl'] + "peak-game.txt"
 
-        # Initialize variables
-        opt_in_start = None
-        starts_at = None
-        game = None
-        levels = None
+        curr_response = requests.get(urlCurrent)
+        # Split the string by newlines to get individual lines
+        curr_lines = curr_response.text.split('\n')
+
+        # Initialize current variables
+        curr_opt_in_start = None
+        curr_starts_at = None
+        curr_game = None
+        curr_levels = None
 
         # Iterate over each line and extract the values
-        for line in lines:
+        for line in curr_lines:
             if line.startswith('game:'):
-                game = line.split(': ')[1].strip()
-            if game == "'None'":
-                game = "No Game Scheduled"
-                opt_in_start = "N/A"
-                starts_at = "N/A"
+                curr_game = line.split(': ')[1].strip()
+            if curr_game == "'None'":
+                curr_curr_game = "No Game Scheduled"
+                curr_opt_in_start = "N/A"
+                curr_starts_at = "N/A"
                 break
             elif line.startswith('optInStart:'):
-                opt_in_start = line.split(': ')[1].strip()
-                optTime = datetime.datetime.strptime(opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
-                optTime = optTime.strftime("%H:%M")
+                curr_opt_in_start = line.split(': ')[1].strip()
+                curr_optTime = datetime.datetime.strptime(curr_opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+                curr_optTime = curr_optTime.strftime("%H:%M")
                 #print(opt_in_start)
-                opt_in_start = int(parse(opt_in_start).timestamp())
+                curr_opt_in_start = int(parse(curr_opt_in_start).timestamp())
             elif line.startswith('startsAt:'):
-                starts_at = line.split(': ')[1].strip()
-                startTime  = datetime.datetime.strptime(starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
-                startTime = startTime.strftime("%H:%M")
-                starts_at = int(parse(starts_at).timestamp())
+                curr_starts_at = line.split(': ')[1].strip()
+                curr_startTime  = datetime.datetime.strptime(curr_starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+                curr_startTime = curr_startTime.strftime("%H:%M")
+                curr_starts_at = int(parse(curr_starts_at).timestamp())
             elif line.startswith('levels:'):
-                levels = line.split(': ')[1].strip()
+                curr_levels = line.split(': ')[1].strip()
+
+        urlPrevious = config['peakUrl'] + "peak-game-previous.txt"
+
+        pre_response = requests.get(urlPrevious)
+        # Split the string by newlines to get individual lines
+        pre_lines = pre_response.text.split('\n')
+    
+        #Initialize previous variables
+        pre_opt_in_start = None
+        pre_starts_at = None
+        pre_game = None
+        pre_levels = None
+
+        for line in pre_lines:
+            if line.startswith('game:'):
+                pre_game = line.split(': ')[1].strip()
+            if pre_game == "'None'":
+                pre_game = "No Game Scheduled"
+                pre_opt_in_start = "N/A"
+                pre_starts_at = "N/A"
+                break
+            elif line.startswith('optInStart:'):
+                pre_opt_in_start = line.split(': ')[1].strip()
+                pre_optTime = datetime.datetime.strptime(pre_opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+                pre_optTime = pre_optTime.strftime("%H:%M")
+                #print(opt_in_start)
+                pre_opt_in_start = int(parse(pre_opt_in_start).timestamp())
+            elif line.startswith('startsAt:'):
+                pre_starts_at = line.split(': ')[1].strip()
+                pre_startTime  = datetime.datetime.strptime(pre_starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+                pre_startTime = pre_startTime.strftime("%H:%M")
+                pre_starts_at = int(parse(pre_starts_at).timestamp())
+            elif line.startswith('levels:'):
+                pre_levels = line.split(': ')[1].strip()
 
         #switch case on game
-        if game == "WOLF_WITS":
+        if curr_game == "WOLF_WITS":
             #alertRole = 1149156059131424888
-            alertRole = 1149152050391822336
-        elif game == "WATER_WALL":
+            curr_alertRole = 1149152050391822336
+        elif curr_game == "WATER_WALL":
             #alertRole = 1149168100168704120
-            alertRole = 1149151491211411567
-        elif game == "TUG_OF_WOOL":
+            curr_alertRole = 1149151491211411567
+        elif curr_game == "TUG_OF_WOOL":
             #alertRole = 1149168129507872769
-            alertRole = 1149152166586626128
+            curr_alertRole = 1149152166586626128
         else:
-            alertRole = ""
+            curr_alertRole = ""
+
+         #switch case on game
+        if pre_game == "WOLF_WITS":
+            #alertRole = 1149156059131424888
+            pre_alertRole = 1149152050391822336
+        elif pre_game == "WATER_WALL":
+            #alertRole = 1149168100168704120
+            pre_alertRole = 1149151491211411567
+        elif pre_game == "TUG_OF_WOOL":
+            #alertRole = 1149168129507872769
+            pre_alertRole = 1149152166586626128
+        else:
+            pre_alertRole = ""
            
                
-        if alertRole != "":
+        if curr_alertRole != "" or pre_alertRole != "":
 
             #send to irlalpha wolf-game channel
             channel = bot.get_channel(969249236464050187)
             #test channel
             #channel = bot.get_channel(1081472865360171090)
 
-            print(f'OPT TIME {optTime}')
-            print(f'START TIME {startTime}')
+            print(f'CUR OPT TIME {curr_optTime}')
+            print(f'CUR START TIME {curr_startTime}')
+
+            print(f'PRE OPT TIME {pre_optTime}')
+            print(f'PRE START TIME {pre_startTime}')
 
             # Get the current time as a datetime object
             current_time = datetime.datetime.utcnow()
@@ -1021,12 +1072,12 @@ def main(source, verbose=False):
             current_time = current_time.strftime("%H:%M")
             print(current_time)
 
-            if current_time == optTime:
-                message = f"OPT FOR <@&{alertRole}> NOW <t:{opt_in_start}> with open levels: {levels} the game starts at <t:{starts_at}>"
+            if current_time == curr_optTime:
+                message = f"OPT FOR <@&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
                 print (message)
                 await channel.send(message)
-            if current_time == startTime:
-                message = f"A new round of <@&{alertRole}> has been created! The game begins at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+            if current_time == pre_startTime:
+                message = f"A new round of <@&{pre_alertRole}> has been created! The game begins at <t:{pre_starts_at}> and opt in starts at <t:{pre_opt_in_start}> with open levels: {pre_levels}"
                 print (message)
                 await channel.send(message)
             
