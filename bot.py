@@ -953,7 +953,7 @@ def main(source, verbose=False):
 
 
     async def getPeakGame():
-        url = config['peakGameUrl']
+        url = config['peakUrl']
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('\n')
