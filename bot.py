@@ -996,7 +996,7 @@ def main(source, verbose=False):
                
         if alertRole != "":
 
-            message = f"@<&{alertRole}> at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
+            message = f"<@&{alertRole}> at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
             print (message)
 
             #send to irlalpha wolf-game channel
