@@ -978,12 +978,12 @@ def main(source, verbose=False):
                 break
             elif line.startswith('optInStart:'):
                 opt_in_start = line.split(': ')[1].strip()
-                optTime = datetime.datetime.strptime(opt_in_start, "%Y-%m-%dT%H:%M:%S.%fZ")
+                optTime = datetime.datetime.strptime(opt_in_start, "%H:%M")
                 #print(opt_in_start)
                 opt_in_start = int(parse(opt_in_start).timestamp())
             elif line.startswith('startsAt:'):
                 starts_at = line.split(': ')[1].strip()
-                startTime = datetime.datetime.strptime(starts_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+                startTime = datetime.datetime.strptime(starts_at, "%H:%M")
                 starts_at = int(parse(starts_at).timestamp())
             elif line.startswith('levels:'):
                 levels = line.split(': ')[1].strip()
@@ -1012,6 +1012,8 @@ def main(source, verbose=False):
             # Get the current time as a datetime object
             current_time = datetime.datetime.utcnow()
             current_time = current_time + datetime.timedelta(hours=1)
+            # get just hrs and mins
+            current_time = current_time.strftime("%H:%M")
             print(current_time)
 
             if current_time == optTime:
