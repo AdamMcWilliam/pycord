@@ -1076,20 +1076,20 @@ def main(source, verbose=False):
             noPingStart = datetime.time(8, 0)
             noPingEnd = datetime.time(14, 0)
 
-            #ping 
+            #no ping 
             if  noPingStart <= current_time.time() < noPingEnd:
                 if current_time_str == curr_optTime:
-                    message = f"OPT FOR <@&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
+                    message = f"OPT FOR <&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
                     print (message)
                     await channel.send(message)
                 if current_time_str == pre_startTime:
                     message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
                     print (message)
                     await channel.send(message)
-            #no ping
+            #ping
             else:
                 if current_time_str == curr_optTime:
-                    message = f"OPT FOR {curr_alertRole} NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
+                    message = f"OPT FOR <@&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
                     print (message)
                     await channel.send(message)
                 if current_time_str == pre_startTime:
