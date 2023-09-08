@@ -1069,8 +1069,8 @@ def main(source, verbose=False):
             current_time = datetime.datetime.utcnow()
             #current_time = current_time + datetime.timedelta(hours=1)
             # get just hrs and mins
-            current_time = current_time.strftime("%H:%M")
-            print(current_time)
+            current_time_str = current_time.strftime("%H:%M")
+            print(current_time_str)
 
             # Define the start and end times (8 am and 2 pm) in UTC
             noPingStart = datetime.time(8, 0)
@@ -1078,21 +1078,21 @@ def main(source, verbose=False):
 
             #ping 
             if  noPingStart <= current_time.time() < noPingEnd:
-                if current_time == curr_optTime:
+                if current_time_str == curr_optTime:
                     message = f"OPT FOR <@&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
                     print (message)
                     await channel.send(message)
-                if current_time == pre_startTime:
+                if current_time_str == pre_startTime:
                     message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
                     print (message)
                     await channel.send(message)
             #no ping
             else:
-                if current_time == curr_optTime:
+                if current_time_str == curr_optTime:
                     message = f"OPT FOR {curr_alertRole} NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
                     print (message)
                     await channel.send(message)
-                if current_time == pre_startTime:
+                if current_time_str == pre_startTime:
                     message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
                     print (message)
                     await channel.send(message)
