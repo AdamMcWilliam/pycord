@@ -1083,7 +1083,7 @@ def main(source, verbose=False):
                     print (message)
                     await channel.send(message)
                 if current_time_str == pre_startTime:
-                    message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
+                    message = f"A new round of <&{curr_alertRole}> has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
                     print (message)
                     await channel.send(message)
             #ping
@@ -1093,7 +1093,7 @@ def main(source, verbose=False):
                     print (message)
                     await channel.send(message)
                 if current_time_str == pre_startTime:
-                    message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
+                    message = f"A new round of <&{curr_alertRole}> has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
                     print (message)
                     await channel.send(message)
                 
