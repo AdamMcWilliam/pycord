@@ -1072,15 +1072,31 @@ def main(source, verbose=False):
             current_time = current_time.strftime("%H:%M")
             print(current_time)
 
-            if current_time == curr_optTime:
-                message = f"OPT FOR <@&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
-                print (message)
-                await channel.send(message)
-            if current_time == pre_startTime:
-                message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
-                print (message)
-                await channel.send(message)
-            
+            # Define the start and end times (8 am and 2 pm) in UTC
+            noPingStart = datetime.time(8, 0)
+            noPingEnd = datetime.time(14, 0)
+
+            #ping 
+            if  noPingStart <= current_time.time() < noPingEnd:
+                if current_time == curr_optTime:
+                    message = f"OPT FOR <@&{curr_alertRole}> NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
+                    print (message)
+                    await channel.send(message)
+                if current_time == pre_startTime:
+                    message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
+                    print (message)
+                    await channel.send(message)
+            #no ping
+            else:
+                if current_time == curr_optTime:
+                    message = f"OPT FOR {curr_alertRole} NOW <t:{curr_opt_in_start}> with open levels: {curr_levels} the game starts at <t:{curr_starts_at}>"
+                    print (message)
+                    await channel.send(message)
+                if current_time == pre_startTime:
+                    message = f"A new round of {curr_alertRole} has been created! The game begins at <t:{curr_starts_at}> and opt in starts at <t:{curr_opt_in_start}> with open levels: {curr_levels}"
+                    print (message)
+                    await channel.send(message)
+                
 
         peakHrs = 40
         #peakHrs = (config['peakFreq'] * 60) *60
