@@ -863,18 +863,16 @@ def main(source, verbose=False):
         print(lines)
 
         # Initialize variables
-        starts_at = None
+        starts_at = lines[1]
 
         # Iterate over each line and extract the values
         #if starts at not N/A
-        for line in lines:
-            if line.startswith('N/A'):
+      
+        if starts_at == 'N/A':
                 game = "No Game Scheduled"
                 starts_at = "N/A"
-                break
-            else:
-                starts_at = line.strip()
-                starts_at = int(parse(starts_at).timestamp())
+        else:
+            starts_at = int(parse(starts_at).timestamp())
 
         message = f"Next Wolf Wits game is {game} at <t:{starts_at}> "
         await ctx.send(message) 
