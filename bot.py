@@ -873,6 +873,51 @@ def main(source, verbose=False):
         else:
             starts_at = int(parse(starts_at).timestamp())
             message = f"Next Wolf Wits game is at <t:{starts_at}> "
+
+        await ctx.send(message) 
+    
+    @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
+    async def nextWall(ctx):
+        url = "http://192.168.1.22:8000/nextWaterWall.txt"
+        response = requests.get(url)
+        # Split the string by newlines to get individual lines
+        lines = response.text.split('Next time for Waterwall:')
+        print(lines)
+
+        # Initialize variables
+        starts_at = lines[1]
+
+        # Iterate over each line and extract the values
+        #if starts at not N/A
+      
+        if starts_at == 'N/A':
+            message = f"No Wall game found."
+        else:
+            starts_at = int(parse(starts_at).timestamp())
+            message = f"Next Water Wall game is at <t:{starts_at}> "
+            
+        await ctx.send(message)
+
+    
+    @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
+    async def nextTug(ctx):
+        url = "http://192.168.1.22:8000/nextTug.txt"
+        response = requests.get(url)
+        # Split the string by newlines to get individual lines
+        lines = response.text.split('Next time for Tug:')
+        print(lines)
+
+        # Initialize variables
+        starts_at = lines[1]
+
+        # Iterate over each line and extract the values
+        #if starts at not N/A
+      
+        if starts_at == 'N/A':
+            message = f"No Tug game found."
+        else:
+            starts_at = int(parse(starts_at).timestamp())
+            message = f"Next Tug game is at <t:{starts_at}> "
             
         await ctx.send(message) 
 
