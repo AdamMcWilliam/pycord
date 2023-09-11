@@ -860,6 +860,7 @@ def main(source, verbose=False):
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Wolfwits:')
+        print(lines)
 
         # Initialize variables
         starts_at = None
