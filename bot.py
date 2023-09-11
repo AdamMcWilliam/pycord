@@ -821,7 +821,7 @@ def main(source, verbose=False):
 
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextGame(ctx):
-        url = "http://192.168.1.22:8000/peak-game.txt"
+        url = config['peakUrl'] + "peak-game.txt" 
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('\n')
@@ -856,7 +856,7 @@ def main(source, verbose=False):
 
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextWits(ctx):
-        url = "http://192.168.1.22:8000/nextWolfWits.txt"
+        url = config['peakUrl'] + "nextWolfWits.txt"
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Wolfwits:')
@@ -878,7 +878,7 @@ def main(source, verbose=False):
     
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextWall(ctx):
-        url = "http://192.168.1.22:8000/nextWaterWall.txt"
+        url = config['peakUrl'] + "nextWaterWall.txt"
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Waterwall:')
@@ -901,7 +901,7 @@ def main(source, verbose=False):
     
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextTug(ctx):
-        url = "http://192.168.1.22:8000/nextTug.txt"
+        url = config['peakUrl'] + "nextTug.txt"
         response = requests.get(url)
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Tug:')
