@@ -854,6 +854,30 @@ def main(source, verbose=False):
         message = f"Next game is {game} at <t:{starts_at}> and opt in starts at <t:{opt_in_start}> with open levels: {levels}"
         await ctx.send(message)    
 
+    @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
+    async def nextWits(ctx):
+        url = "http://192.168.1.22:8000/nextWolfWits.txt"
+        response = requests.get(url)
+        # Split the string by newlines to get individual lines
+        lines = response.text.split('Next time for Wolfwits:')
+
+        # Initialize variables
+        starts_at = None
+
+        # Iterate over each line and extract the values
+        #if starts at not N/A
+        for line in lines:
+            if line.startswith('N/A'):
+                game = "No Game Scheduled"
+                starts_at = "N/A"
+                break
+            else:
+                starts_at = line.strip()
+                starts_at = int(parse(starts_at).timestamp())
+
+        message = f"Next Wolf Wits game is {game} at <t:{starts_at}> "
+        await ctx.send(message) 
+
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
     async def projectStats(ctx):
         message = ctx.message.content
