@@ -869,12 +869,11 @@ def main(source, verbose=False):
         #if starts at not N/A
       
         if starts_at == 'N/A':
-                game = "No Game Scheduled"
-                starts_at = "N/A"
+            message = f"No wits game found."
         else:
             starts_at = int(parse(starts_at).timestamp())
-
-        message = f"Next Wolf Wits game is {game} at <t:{starts_at}> "
+            message = f"Next Wolf Wits game is at <t:{starts_at}> "
+            
         await ctx.send(message) 
 
     @bot.command(pass_context=True, brief="Gets projects opensea Graph QL data")
