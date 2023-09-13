@@ -14,11 +14,14 @@ def update_file(sc):
         config = yaml.load(f, Loader=yaml.Loader)
 
 
-    f = open(config['peakUrl'] + "session.txt", "r")
+    web3Token = config['peakUrl'] + "session.txt"
+    web3Token = requests.request("GET", web3Token, headers=headers, data=payload)
+    
 
     url = "https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/peak-game/status"
 
     payload = {}
+    
     web3Token = f.read()
     # remove " from the string
     web3Token = web3Token.replace('"', '')
