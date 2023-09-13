@@ -22,7 +22,6 @@ def update_file(sc):
 
     payload = {}
     
-    web3Token = f.read()
     # remove " from the string
     web3Token = web3Token.replace('"', '')
 
