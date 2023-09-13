@@ -15,7 +15,7 @@ def update_file(sc):
 
 
     web3Token = config['peakUrl'] + "session.txt"
-    web3Token = requests.request("GET", web3Token, headers=headers, data=payload)
+    web3Token = requests.request("GET", web3Token)
     
 
     url = "https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/peak-game/status"
