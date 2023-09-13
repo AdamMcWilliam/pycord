@@ -13,9 +13,11 @@ def update_file(sc):
     with open(filename) as f:
         config = yaml.load(f, Loader=yaml.Loader)
 
-
+    #curl local host file
+    
     web3Token = config['peakUrl'] + "session.txt"
     web3Token = requests.request("GET", web3Token)
+    web3Token = web3Token.text
     
 
     url = "https://hdfat7b8eg.execute-api.us-west-2.amazonaws.com/prod/peak-game/status"
