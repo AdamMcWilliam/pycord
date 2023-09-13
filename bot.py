@@ -21,6 +21,7 @@ from discord.ext.commands import Bot
 import argparse
 import requests
 import schedule
+import sched
 import time
 import datetime
 from tinydb import TinyDB, Query
@@ -1020,10 +1021,10 @@ def main(source, verbose=False):
 
         await asyncio.sleep(config['updateFreq'])  # in seconds
 
-
+    
     async def getPeakGame():
 
-        urlCurrent = config['peakUrl'] + "peak-game.txt"
+        urlCurrent = "peak-game.txt"
 
         curr_response = requests.get(urlCurrent)
         # Split the string by newlines to get individual lines
