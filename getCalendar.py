@@ -27,6 +27,8 @@ def fetch_game_times_and_write_to_files():
     web3Token = config['peakUrl'] + "session.txt"
     web3Token = requests.request("GET", web3Token)
     web3Token = web3Token.text
+     # remove " from the string
+    web3Token = web3Token.replace('"', '')
 
     headers = {
         'web3-token': web3Token
