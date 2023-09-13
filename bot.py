@@ -1068,7 +1068,7 @@ def main(source, verbose=False):
 
         urlPrevious = open("peak-game-previous.txt", "r")
         urlPrevious = urlPrevious.read()
-        
+
         # Split the string by newlines to get individual lines
         pre_lines = urlPrevious.split('\n')
     
@@ -1077,6 +1077,7 @@ def main(source, verbose=False):
         pre_starts_at = None
         pre_game = None
         pre_levels = None
+        pre_optTime = None
 
         for line in pre_lines:
             if line.startswith('game:'):
