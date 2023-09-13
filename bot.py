@@ -1078,6 +1078,7 @@ def main(source, verbose=False):
         pre_game = None
         pre_levels = None
         pre_optTime = None
+        pre_startTime = None
 
         for line in pre_lines:
             if line.startswith('game:'):
