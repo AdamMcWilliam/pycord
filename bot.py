@@ -824,8 +824,9 @@ def main(source, verbose=False):
     async def nextGame(ctx):
         
         response = open("peak-game.txt", "r")
+        response = response.read()
         # Split the string by newlines to get individual lines
-        lines = response.text.split('\n')
+        lines = response.split('\n')
 
         # Initialize variables
         opt_in_start = None
@@ -860,7 +861,8 @@ def main(source, verbose=False):
         
         response = open("nextWolfWits.txt", "r")
         # Split the string by newlines to get individual lines
-        lines = response.text.split('Next time for Wolfwits:')
+        response = response.read()
+        lines = response.split('Next time for Wolfwits:')
         print(lines)
 
         # Initialize variables
@@ -881,8 +883,9 @@ def main(source, verbose=False):
     async def nextWall(ctx):
 
         response = open("nextWaterwall.txt", "r")
+        response = response.read()
         # Split the string by newlines to get individual lines
-        lines = response.text.split('Next time for Waterwall:')
+        lines = response.split('Next time for Waterwall:')
         print(lines)
 
         # Initialize variables
@@ -904,8 +907,9 @@ def main(source, verbose=False):
     async def nextTug(ctx):
 
         response = open("nextTug.txt", "r")
+        response = response.read()
         # Split the string by newlines to get individual lines
-        lines = response.text.split('Next time for Tug:')
+        lines = response.split('Next time for Tug:')
         print(lines)
 
         # Initialize variables
@@ -1029,8 +1033,9 @@ def main(source, verbose=False):
         #read local text file peak-game.txt
 
         curr_response = open("peak-game.txt", "r")
+        curr_response = curr_response.read()
         # Split the string by newlines to get individual lines
-        curr_lines = curr_response.text.split('\n')
+        curr_lines = curr_response.split('\n')
 
         # Initialize current variables
         curr_opt_in_start = None
@@ -1062,10 +1067,10 @@ def main(source, verbose=False):
                 curr_levels = line.split(': ')[1].strip()
 
         urlPrevious = open("peak-game-previous.txt", "r")
-
-        pre_response = urlPrevious
+        urlPrevious = urlPrevious.read()
+        
         # Split the string by newlines to get individual lines
-        pre_lines = pre_response.text.split('\n')
+        pre_lines = urlPrevious.split('\n')
     
         #Initialize previous variables
         pre_opt_in_start = None
