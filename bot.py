@@ -857,8 +857,8 @@ def main(source, verbose=False):
 
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextWits(ctx):
-        url = config['peakUrl'] + "nextWolfWits.txt"
-        response = requests.get(url)
+        
+        response = open("nextWolfWits.txt", "r")
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Wolfwits:')
         print(lines)
@@ -879,8 +879,8 @@ def main(source, verbose=False):
     
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextWall(ctx):
-        url = config['peakUrl'] + "nextWaterWall.txt"
-        response = requests.get(url)
+
+        response = open("nextWaterwall.txt", "r")
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Waterwall:')
         print(lines)
@@ -902,8 +902,8 @@ def main(source, verbose=False):
     
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextTug(ctx):
-        url = config['peakUrl'] + "nextTug.txt"
-        response = requests.get(url)
+
+        response = open("nextTug.txt", "r")
         # Split the string by newlines to get individual lines
         lines = response.text.split('Next time for Tug:')
         print(lines)
@@ -1024,9 +1024,11 @@ def main(source, verbose=False):
     
     async def getPeakGame():
 
-        urlCurrent = "peak-game.txt"
+        #read local text file
+       
+        #read local text file peak-game.txt
 
-        curr_response = requests.get(urlCurrent)
+        curr_response = open("peak-game.txt", "r")
         # Split the string by newlines to get individual lines
         curr_lines = curr_response.text.split('\n')
 
