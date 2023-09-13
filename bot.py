@@ -822,8 +822,8 @@ def main(source, verbose=False):
 
     @bot.command(pass_context=True, brief="Get Next Wolf Game Game")
     async def nextGame(ctx):
-        url = config['peakUrl'] + "peak-game.txt" 
-        response = requests.get(url)
+        
+        response = open("peak-game.txt", "r")
         # Split the string by newlines to get individual lines
         lines = response.text.split('\n')
 
@@ -1061,9 +1061,9 @@ def main(source, verbose=False):
             elif line.startswith('levels:'):
                 curr_levels = line.split(': ')[1].strip()
 
-        urlPrevious = config['peakUrl'] + "peak-game-previous.txt"
+        urlPrevious = open("peak-game-previous.txt", "r")
 
-        pre_response = requests.get(urlPrevious)
+        pre_response = urlPrevious
         # Split the string by newlines to get individual lines
         pre_lines = pre_response.text.split('\n')
     
