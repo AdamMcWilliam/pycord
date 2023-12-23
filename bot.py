@@ -189,6 +189,17 @@ def tokenPrice(token,config):
       pricedata=ethdata['quote']
       usdprice=pricedata['USD']
       ethprice=usdprice['price']
+      percentage_1h = pair['percentage_change_1h']
+      percentage_24h = pair['percentage_change_24h']
+      market_cap = pair['self_reported_market_cap']
+
+      coinArray = {}
+      coinArray['price'] = usdprice['price']
+      coinArray['percentage_1h'] = percentage_1h
+      coinArray['percentage_24h'] = percentage_24h
+      coinArray['market_cap'] = market_cap
+
+
       print(usdprice['price'])
       #if USD price empty
       if usdprice['price'] == None:
@@ -229,7 +240,7 @@ def tokenPrice(token,config):
     except (ConnectionError, Timeout, TooManyRedirects) as e:
       print(e) 
     
-    return usdprice['price']
+    return coinArray
 
 
 def main(source, verbose=False):
@@ -384,26 +395,29 @@ def main(source, verbose=False):
 
                 price = tokenPrice(token,config)
                 embed = discord.Embed(title=f"Current {token} price")
-                if not isinstance(price, dict):
-                    embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
+                
+     
+                if 'base_token_name' not in price:
+                    embed.add_field(name=f"1 {token} = ", value=f"${price['price']}", inline=True) 
                 
                 if(amount!=0):
                     print(amount)
-                    if not isinstance(price, dict):
+                    if 'base_token_name' not in price:
                         embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
                 #if usdprice array is not empty
                 #if price is dict
-                if isinstance(price, dict):
-                    if 'base_token_name' in price:
-                        embed.add_field(name=f"1 {token} = ", value=f"${price['price']:.5f}", inline=True)
-                        if(amount!=0): 
-                            embed.add_field(name=f"{amount} {token} = ", value=f"${price['price']*float(amount):.5f}", inline=True)
-                        embed.add_field(name=f"5m: ", value=f"{price['percentage_5m']:.2f}%", inline=True)
-                        embed.add_field(name=f"1h: ", value=f"{price['percentage_1h']:.2f}%", inline=True)
-                        embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
-                        embed.add_field(name=f"24h: ", value=f"{price['percentage_24h']:.2f}%", inline=True)
-                        embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
-                        embed.add_field(name=f"Chart Link: ", value=f"{price['chart_link']}", inline=True)
+                embed.add_field(name=f"1 {token} = ", value=f"${price['price']:.5f}", inline=True)
+                if(amount!=0): 
+                    embed.add_field(name=f"{amount} {token} = ", value=f"${price['price']*float(amount):.5f}", inline=True)
+                if 'base_token_name' in price:    
+                    embed.add_field(name=f"5m: ", value=f"{price['percentage_5m']:.2f}%", inline=True)
+                embed.add_field(name=f"1h: ", value=f"{price['percentage_1h']:.2f}%", inline=True)
+                if 'base_token_name' in price:
+                    embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
+                embed.add_field(name=f"24h: ", value=f"{price['percentage_24h']:.2f}%", inline=True)
+                embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
+                if 'base_token_name' in price:
+                    embed.add_field(name=f"Chart Link: ", value=f"{price['chart_link']}", inline=True)
 
                 await message.channel.send(embed=embed)
             #else:
