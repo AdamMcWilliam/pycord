@@ -190,7 +190,40 @@ def tokenPrice(token,config):
       print(usdprice['price'])
     except (ConnectionError, Timeout, TooManyRedirects) as e:
       print(e) 
-    
+      #coinmarketcap call faild, try dexscreener
+      dexurl = "https://api.dexscreener.com/latest/dex/search/?q=:"+token+"%20SOL"
+      dexresponse = requests.get(dexurl)
+      dexresponse = dexresponse.json()
+      for pair in dexresponse['pairs']:
+        base_token_name = pair['baseToken']['name']
+        quote_token_name = pair['quoteToken']['name']
+        address = pair['pairAddress']
+        chain_id = pair['chainId']
+        percentage_5m = pair['priceChange']['m5']
+        percentage_1h = pair['priceChange']['h1']
+        percentage_6h = pair['priceChange']['h6']
+        percentage_24h = pair['priceChange']['h24']
+        market_cap = pair['fdv']
+        price_usd = float(pair['priceUsd'])
+        chart_link = f"https://dexscreener.com/{chain_id}/{address}"
+
+        if base_token_name.lower() == token.lower():
+            print(f"{base_token_name}/{quote_token_name} Price: ${price_usd:.5f} 5m: {percentage_5m:.2f}% 1h: {percentage_1h:.2f}% 6h: {percentage_6h:.2f}% 24h: {percentage_24h:.2f}% Market Cap: ${market_cap:.2f}")
+            #array of all the data
+            dexArray = {}
+            dexArray['price'] = price_usd
+            dexArray['percentage_5m'] = percentage_5m
+            dexArray['percentage_1h'] = percentage_1h
+            dexArray['percentage_6h'] = percentage_6h
+            dexArray['percentage_24h'] = percentage_24h
+            dexArray['market_cap'] = market_cap
+            dexArray['base_token_name'] = base_token_name
+            dexArray['quote_token_name'] = quote_token_name
+            dexArray['address'] = address
+            dexArray['chart_link'] = chart_link
+
+            return dexArray
+
     return usdprice['price']
 
 
@@ -351,7 +384,17 @@ def main(source, verbose=False):
                 if(amount!=0):
                     print(amount)
                     embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
-                    
+                #if usdprice array is not empty
+                if 'base_token_name' in price:
+                    embed.add_field(name=f"5m: ", value=f"{price['percentage_5m']:.2f}%", inline=True)
+                    embed.add_field(name=f"1h: ", value=f"{price['percentage_1h']:.2f}%", inline=True)
+                    embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
+                    embed.add_field(name=f"24h: ", value=f"{price['percentage_24h']:.2f}%", inline=True)
+                    embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
+                    embed.add_field(name=f"Base Token Name: ", value=f"{price['base_token_name']}", inline=True)
+                    embed.add_field(name=f"Quote Token Name: ", value=f"{price['quote_token_name']}", inline=True)
+                    embed.add_field(name=f"Chart Link: ", value=f"{price['chart_link']}", inline=True)
+
                 await message.channel.send(embed=embed)
             #else:
                 #await message.channel.send("nope")
@@ -1228,7 +1271,8 @@ def main(source, verbose=False):
 
         price = tokenPrice(token,config)
         embed = discord.Embed(title=f"Current {token} price")
-        embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
+        embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True)
+
     
         await ctx.send(embed=embed)
 
@@ -1496,7 +1540,7 @@ def main(source, verbose=False):
                 logger.error(exc)
                 continue    
             
-            #await getPeakGame()
+            await getPeakGame()
             
 
     bot.run(config['discordBotKey'])
