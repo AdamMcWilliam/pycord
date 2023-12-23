@@ -184,7 +184,6 @@ def tokenPrice(token,config):
       response = session.get(coinurl, params=coinparameters).json()
       #print size of response
       print(response)
-      return response
       
       data = response['data']
       ethdata=data[token]
@@ -193,7 +192,7 @@ def tokenPrice(token,config):
       ethprice=usdprice['price']
       percentage_1h = usdprice['percent_change_1h']
       percentage_24h = usdprice['percent_change_24h']
-      market_cap = data['self_reported_market_cap']
+      market_cap = data[token]['self_reported_market_cap']
 
       coinArray = {}
       coinArray['price'] = usdprice['price']
