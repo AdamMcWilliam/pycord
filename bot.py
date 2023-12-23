@@ -385,8 +385,7 @@ def main(source, verbose=False):
                 price = tokenPrice(token,config)
                 embed = discord.Embed(title=f"Current {token} price")
                 if not isinstance(price, dict):
-                        if 'base_token_name' not in price:
-                            embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
+                    embed.add_field(name=f"1 {token} = ", value=f"${price}", inline=True) 
                 
                 if(amount!=0):
                     print(amount)
