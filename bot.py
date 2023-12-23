@@ -390,8 +390,7 @@ def main(source, verbose=False):
                 
                 if(amount!=0):
                     print(amount)
-                    
-                            embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
+                    embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
                 #if usdprice array is not empty
                 #if price is dict
                 if isinstance(price, dict):
