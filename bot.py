@@ -416,7 +416,8 @@ def main(source, verbose=False):
                 if 'base_token_name' in price:
                     embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
                 embed.add_field(name=f"24h: ", value=f"{price['percentage_24h']:.2f}%", inline=True)
-                embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
+                if price['market_cap'] != None:
+                    embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
                 if 'base_token_name' in price:
                     embed.add_field(name=f"Chart Link: ", value=f"{price['chart_link']}", inline=True)
 
