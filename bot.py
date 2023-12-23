@@ -389,13 +389,15 @@ def main(source, verbose=False):
                 
                 if(amount!=0):
                     print(amount)
-                    embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
+                    if not isinstance(price, dict):
+                        embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
                 #if usdprice array is not empty
                 #if price is dict
                 if isinstance(price, dict):
                     if 'base_token_name' in price:
-                        embed.add_field(name=f"1 {token} = ", value=f"${price['price']:.5f}", inline=True) 
-                        embed.add_field(name=f"{amount} {token} = ", value=f"${price['price']:.5f}", inline=True)
+                        embed.add_field(name=f"1 {token} = ", value=f"${price['price']:.5f}", inline=True)
+                        if(amount!=0): 
+                            embed.add_field(name=f"{amount} {token} = ", value=f"${price['price']*float(amount):.5f}", inline=True)
                         embed.add_field(name=f"5m: ", value=f"{price['percentage_5m']:.2f}%", inline=True)
                         embed.add_field(name=f"1h: ", value=f"{price['percentage_1h']:.2f}%", inline=True)
                         embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
