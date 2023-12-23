@@ -183,7 +183,7 @@ def tokenPrice(token,config):
     try:
       response = session.get(coinurl, params=coinparameters).json()
       #print size of response
-      print(len(response))
+      print(response)
       data = response['data']
       ethdata=data[token]
       pricedata=ethdata['quote']
