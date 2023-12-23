@@ -188,42 +188,45 @@ def tokenPrice(token,config):
       usdprice=pricedata['USD']
       ethprice=usdprice['price']
       print(usdprice['price'])
+      #if USD price empty
+      if usdprice['price'] == None:
+        #coinmarketcap call faild, try dexscreener
+        dexurl = "https://api.dexscreener.com/latest/dex/search/?q=:"+token+"%20SOL"
+        dexresponse = requests.get(dexurl)
+        dexresponse = dexresponse.json()
+        for pair in dexresponse['pairs']:
+          base_token_name = pair['baseToken']['name']
+          quote_token_name = pair['quoteToken']['name']
+          address = pair['pairAddress']
+          chain_id = pair['chainId']
+          percentage_5m = pair['priceChange']['m5']
+          percentage_1h = pair['priceChange']['h1']
+          percentage_6h = pair['priceChange']['h6']
+          percentage_24h = pair['priceChange']['h24']
+          market_cap = pair['fdv']
+          price_usd = float(pair['priceUsd'])
+          chart_link = f"https://dexscreener.com/{chain_id}/{address}"
+
+          if base_token_name.lower() == token.lower():
+              print(f"{base_token_name}/{quote_token_name} Price: ${price_usd:.5f} 5m: {percentage_5m:.2f}% 1h: {percentage_1h:.2f}% 6h: {percentage_6h:.2f}% 24h: {percentage_24h:.2f}% Market Cap: ${market_cap:.2f}")
+              #array of all the data
+              dexArray = {}
+              dexArray['price'] = price_usd
+              dexArray['percentage_5m'] = percentage_5m
+              dexArray['percentage_1h'] = percentage_1h
+              dexArray['percentage_6h'] = percentage_6h
+              dexArray['percentage_24h'] = percentage_24h
+              dexArray['market_cap'] = market_cap
+              dexArray['base_token_name'] = base_token_name
+              dexArray['quote_token_name'] = quote_token_name
+              dexArray['address'] = address
+              dexArray['chart_link'] = chart_link
+
+              return dexArray
+        
     except (ConnectionError, Timeout, TooManyRedirects) as e:
       print(e) 
-      #coinmarketcap call faild, try dexscreener
-      dexurl = "https://api.dexscreener.com/latest/dex/search/?q=:"+token+"%20SOL"
-      dexresponse = requests.get(dexurl)
-      dexresponse = dexresponse.json()
-      for pair in dexresponse['pairs']:
-        base_token_name = pair['baseToken']['name']
-        quote_token_name = pair['quoteToken']['name']
-        address = pair['pairAddress']
-        chain_id = pair['chainId']
-        percentage_5m = pair['priceChange']['m5']
-        percentage_1h = pair['priceChange']['h1']
-        percentage_6h = pair['priceChange']['h6']
-        percentage_24h = pair['priceChange']['h24']
-        market_cap = pair['fdv']
-        price_usd = float(pair['priceUsd'])
-        chart_link = f"https://dexscreener.com/{chain_id}/{address}"
-
-        if base_token_name.lower() == token.lower():
-            print(f"{base_token_name}/{quote_token_name} Price: ${price_usd:.5f} 5m: {percentage_5m:.2f}% 1h: {percentage_1h:.2f}% 6h: {percentage_6h:.2f}% 24h: {percentage_24h:.2f}% Market Cap: ${market_cap:.2f}")
-            #array of all the data
-            dexArray = {}
-            dexArray['price'] = price_usd
-            dexArray['percentage_5m'] = percentage_5m
-            dexArray['percentage_1h'] = percentage_1h
-            dexArray['percentage_6h'] = percentage_6h
-            dexArray['percentage_24h'] = percentage_24h
-            dexArray['market_cap'] = market_cap
-            dexArray['base_token_name'] = base_token_name
-            dexArray['quote_token_name'] = quote_token_name
-            dexArray['address'] = address
-            dexArray['chart_link'] = chart_link
-
-            return dexArray
-
+    
     return usdprice['price']
 
 
