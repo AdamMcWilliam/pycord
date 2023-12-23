@@ -385,15 +385,17 @@ def main(source, verbose=False):
                     print(amount)
                     embed.add_field(name=f"{amount} {token} = ", value=f"${float(price)*float(amount)}", inline=True)
                 #if usdprice array is not empty
-                if 'base_token_name' in price:
-                    embed.add_field(name=f"5m: ", value=f"{price['percentage_5m']:.2f}%", inline=True)
-                    embed.add_field(name=f"1h: ", value=f"{price['percentage_1h']:.2f}%", inline=True)
-                    embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
-                    embed.add_field(name=f"24h: ", value=f"{price['percentage_24h']:.2f}%", inline=True)
-                    embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
-                    embed.add_field(name=f"Base Token Name: ", value=f"{price['base_token_name']}", inline=True)
-                    embed.add_field(name=f"Quote Token Name: ", value=f"{price['quote_token_name']}", inline=True)
-                    embed.add_field(name=f"Chart Link: ", value=f"{price['chart_link']}", inline=True)
+                #if price is dict
+                if isinstance(price, dict):
+                    if 'base_token_name' in price:
+                        embed.add_field(name=f"5m: ", value=f"{price['percentage_5m']:.2f}%", inline=True)
+                        embed.add_field(name=f"1h: ", value=f"{price['percentage_1h']:.2f}%", inline=True)
+                        embed.add_field(name=f"6h: ", value=f"{price['percentage_6h']:.2f}%", inline=True)
+                        embed.add_field(name=f"24h: ", value=f"{price['percentage_24h']:.2f}%", inline=True)
+                        embed.add_field(name=f"Market Cap: ", value=f"${price['market_cap']:.2f}", inline=True)
+                        embed.add_field(name=f"Base Token Name: ", value=f"{price['base_token_name']}", inline=True)
+                        embed.add_field(name=f"Quote Token Name: ", value=f"{price['quote_token_name']}", inline=True)
+                        embed.add_field(name=f"Chart Link: ", value=f"{price['chart_link']}", inline=True)
 
                 await message.channel.send(embed=embed)
             #else:
