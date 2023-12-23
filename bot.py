@@ -189,9 +189,9 @@ def tokenPrice(token,config):
       pricedata=ethdata['quote']
       usdprice=pricedata['USD']
       ethprice=usdprice['price']
-      percentage_1h = data['percent_change_1h']
-      percentage_24h = data['percent_change_24h']
-      market_cap = data['self_reported_market_cap']
+      percentage_1h = usdprice['percent_change_1h']
+      percentage_24h = usdprice['percent_change_24h']
+      market_cap = usdprice['self_reported_market_cap']
 
       coinArray = {}
       coinArray['price'] = usdprice['price']
