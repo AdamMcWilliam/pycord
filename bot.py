@@ -1566,7 +1566,7 @@ def main(source, verbose=False):
                 logger.error(exc)
                 continue    
             
-            await getPeakGame()
+            #await getPeakGame()
             
 
     bot.run(config['discordBotKey'])
