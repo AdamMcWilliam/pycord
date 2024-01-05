@@ -466,7 +466,9 @@ def main(source, verbose=False):
                         return
                     correct = ("".join(sorted(correct)))[::-1] # reverse this string to fit with tachyons notation
                     #repond to sender
-                    await message.channel.send(f"<@{message.author.id}>, **[{0}]**\nGuesses left: {1}".format(correct, str(get_guesses(guild))))
+                    responseUser = f"<@{message.author.id}>"
+                    response = "**[{0}]**\nGuesses left: {1}".format(correct, str(get_guesses(guild)))
+                    await message.channel.send(responseUser + " " + response)
             await bot.process_commands(message)
 
     # @bot.event
