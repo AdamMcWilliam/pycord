@@ -465,7 +465,8 @@ def main(source, verbose=False):
                         update_status(guild, False)
                         return
                     correct = ("".join(sorted(correct)))[::-1] # reverse this string to fit with tachyons notation
-                    await message.channel.send("**[{0}]**\nGuesses left: {1}".format(correct, str(get_guesses(guild))))
+                    #repond to sender
+                    await message.channel.send(f"<@{message.author.id}>, **[{0}]**\nGuesses left: {1}".format(correct, str(get_guesses(guild))))
             await bot.process_commands(message)
 
     # @bot.event
