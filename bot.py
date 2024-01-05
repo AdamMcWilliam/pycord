@@ -306,7 +306,7 @@ def main(source, verbose=False):
         Input: variable set of arguments.
         """
         guild = ctx.message.guild
-        arg_attempt = 6
+        arg_attempt = 12
         # parse args (or just the one arg, anyway)
         if (len(args) > 0):
             try:
