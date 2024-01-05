@@ -338,7 +338,8 @@ def main(source, verbose=False):
             update_charset(guild, char_response)
             update_status(guild, True)
             update_starttime(guild, time.perf_counter())
-            await ctx.send(response)
+            responseUser = f"<@{ctx.message.author.id}>"
+            await ctx.send(responseUser + " " + response)
         else:
             await ctx.send("A game is already in progress!")
 
