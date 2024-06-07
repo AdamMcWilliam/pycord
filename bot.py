@@ -1100,7 +1100,7 @@ def main(source, verbose=False):
 
     async def get_cave_pop():
 
-        await asyncio.sleep(30)  # in seconds
+        #await asyncio.sleep(30)  # in seconds
 
         url = "https://cave-api.wolf.game/game/caves"
         web3Token = "web3token.txt"
