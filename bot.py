@@ -1116,6 +1116,8 @@ def main(source, verbose=False):
 
         if response.status_code == 401:
             print("Unauthorized")
+        elif response.status_code == 503:
+            print("Service Unavailable")
         else:
              #to json
             data = response.json()
