@@ -1124,20 +1124,31 @@ def main(source, verbose=False):
         elif response.status_code == 200:
              #to json
             data = response.json()
-            #print(data)
-            sheepPop = data['sheepPopulation']
-            wolfPop = data['wolfPopulation']
-            Pop = sheepPop + wolfPop
-            print(f"Population: {Pop}")
-            caveId = data['id']
-            if Pop == 350:
-                #send message to wolf-game channel
-                channel = bot.get_channel(969249236464050187)
-                await channel.send(f"Cave {caveId} has a population of {Pop}")
-            if Pop == 390:
-                #send message to wolf-game channel
-                channel = bot.get_channel(969249236464050187)
-                await channel.send(f"Cave {caveId} has a population of {Pop}")
+
+            for i in data:
+                type = i['type']
+                if type == "OG":
+                    ogPop = i['sheepPopulation'] + i['wolfPopulation']  
+                    ogId = i['id']
+                    if ogPop == 350:
+                        #send message to wolf-game channel
+                        channel = bot.get_channel(969249236464050187)
+                        await channel.send(f"OG Cave {ogId} has a population of {ogPop}")
+                    if ogPop == 390:
+                        #send message to wolf-game channel
+                        channel = bot.get_channel(969249236464050187)
+                        await channel.send(f"OG Cave {ogId} has a population of {ogPop}")
+                elif type == "FREE":
+                    freePop = i['sheepPopulation'] + i['wolfPopulation']  
+                    freeId = i['id']
+                    if freePop == 350:
+                        #send message to wolf-game channel
+                        channel = bot.get_channel(969249236464050187)
+                        await channel.send(f"FREE Cave {freeId} has a population of {freePop}")
+                    if freePop == 390:
+                        #send message to wolf-game channel
+                        channel = bot.get_channel(969249236464050187)
+                        await channel.send(f"FREE Cave {freeId} has a population of {freePop}")
         else:
             print("Error")
 
