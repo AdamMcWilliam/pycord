@@ -1129,6 +1129,7 @@ def main(source, verbose=False):
                 type = i['type']
                 if type == "OG":
                     ogPop = i['sheepPopulation'] + i['wolfPopulation']  
+                    print(f"OG Cave {i['id']} has a population of {ogPop}")
                     ogId = i['id']
                     if ogPop == 350:
                         #send message to wolf-game channel
@@ -1140,6 +1141,7 @@ def main(source, verbose=False):
                         await channel.send(f"OG Cave {ogId} has a population of {ogPop}")
                 elif type == "FREE":
                     freePop = i['sheepPopulation'] + i['wolfPopulation']  
+                    print(f"FREE Cave {i['id']} has a population of {freePop}")
                     freeId = i['id']
                     if freePop == 350:
                         #send message to wolf-game channel
