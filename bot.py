@@ -1112,7 +1112,8 @@ def main(source, verbose=False):
         }
 
         response = requests.request("GET", url, headers=headers)
-       
+        #print response code with description
+        print(f"responseCode: "+response.status_code)
 
         if response.status_code == 401:
             print("Unauthorized")
