@@ -1112,12 +1112,13 @@ def main(source, verbose=False):
         }
 
         response = requests.request("GET", url, headers=headers)
-        #to json
-        data = response.json()
+       
 
-        if(data['error'] == "Unauthorized"):
+        if response.status_code == 401:
             print("Unauthorized")
         else:
+             #to json
+            data = response.json()
             #print(data)
             sheepPop = data['sheepPopulation']
             wolfPop = data['wolfPopulation']
