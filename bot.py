@@ -1131,11 +1131,11 @@ def main(source, verbose=False):
             caveId = data['id']
             if sheepPop == 350:
                 #send message to wolf-game channel
-                channel = bot.get_channel(1081472865360171090)
+                channel = bot.get_channel(969249236464050187)
                 await channel.send(f"Cave {caveId} has a population of {Pop}")
             if sheepPop == 390:
                 #send message to wolf-game channel
-                channel = bot.get_channel(1081472865360171090)
+                channel = bot.get_channel(969249236464050187)
                 await channel.send(f"Cave {caveId} has a population of {Pop}")
 
 
