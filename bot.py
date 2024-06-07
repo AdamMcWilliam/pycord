@@ -1121,7 +1121,7 @@ def main(source, verbose=False):
             print("Unauthorized")
         elif response.status_code == 503:
             print("Service Unavailable")
-        else:
+        elif response.status_code == 200:
              #to json
             data = response.json()
             #print(data)
@@ -1138,6 +1138,8 @@ def main(source, verbose=False):
                 #send message to wolf-game channel
                 channel = bot.get_channel(969249236464050187)
                 await channel.send(f"Cave {caveId} has a population of {Pop}")
+        else:
+            print("Error")
 
 
     async def getPeakGame():
