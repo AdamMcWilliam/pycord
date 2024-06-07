@@ -1098,7 +1098,41 @@ def main(source, verbose=False):
 
         await asyncio.sleep(config['updateFreq'])  # in seconds
 
-    
+    async def get_cave_pop():
+
+        await asyncio.sleep(30)  # in seconds
+
+        url = "https://cave-api.wolf.game/game/caves"
+        web3Token = "web3token.txt"
+        web3Token = open(web3Token, "r")
+        web3Token = web3Token.read()
+        web3Token = web3Token.replace('"', '')
+        headers = {
+            'web3-token': web3Token
+        }
+
+        response = requests.request("GET", url, headers=headers)
+        #to json
+        data = response.json()
+
+        if(data['error'] == "Unauthorized"):
+            print("Unauthorized")
+        else:
+            #print(data)
+            sheepPop = data['sheepPopulation']
+            wolfPop = data['wolfPopulation']
+            Pop = sheepPop + wolfPop
+            caveId = data['id']
+            if sheepPop == 350:
+                #send message to wolf-game channel
+                channel = bot.get_channel(1081472865360171090)
+                await channel.send(f"Cave {caveId} has a population of {Pop}")
+            if sheepPop == 390:
+                #send message to wolf-game channel
+                channel = bot.get_channel(1081472865360171090)
+                await channel.send(f"Cave {caveId} has a population of {Pop}")
+
+
     async def getPeakGame():
 
         #read local text file
@@ -1495,6 +1529,16 @@ def main(source, verbose=False):
         else:
             await ctx.send("STFU stupac")
             
+    @bot.command(pass_context=True, brief="set message to web3token text file")
+    async def setWeb3Token(ctx):
+        message = ctx.message.content
+        message = message.split("!setWeb3Token ")
+        message = message[1]
+        file1 = open("web3token.txt", "w")
+        file1.write(message)
+        file1.close()
+        await ctx.send(f"Web3Token set to {message}")
+
 
     # 2. Load config
     filename = 'config.yaml'
@@ -1571,6 +1615,7 @@ def main(source, verbose=False):
                 continue    
             
             #await getPeakGame()
+            await get_cave_pop()
             
 
     bot.run(config['discordBotKey'])
