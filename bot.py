@@ -1099,60 +1099,67 @@ def main(source, verbose=False):
         await asyncio.sleep(config['updateFreq'])  # in seconds
 
     async def get_cave_pop():
+        recent_messages = []
 
-        #await asyncio.sleep(30)  # in seconds
+        while True:
+            url = "https://cave-api.wolf.game/game/caves"
 
-        url = "https://cave-api.wolf.game/game/caves"
-        web3Token = "web3token.txt"
-        web3Token = open(web3Token, "r")
-        web3Token = web3Token.read()
-        web3Token = web3Token.replace('"', '')
-        headers = {
-            'web3-token': web3Token
-        }
+            # Load the web3token text file
+            with open("web3token.txt", "r") as file:
+                web3Token = file.read().replace('"', '')
 
-        response = requests.request("GET", url, headers=headers)
-        #print response code with description
-        #response code as string
-        responseString = str(response.status_code)  
-        print(f"responseCode: "+ responseString)
+            headers = {
+                'web3-token': web3Token
+            }
 
-        if response.status_code == 401:
-            print("Unauthorized")
-        elif response.status_code == 503:
-            print("Service Unavailable")
-        elif response.status_code == 200:
-             #to json
-            data = response.json()
+            response = requests.get(url, headers=headers)
 
-            for i in data:
-                type = i['type']
-                if type == "OG":
-                    ogPop = i['sheepPopulation'] + i['wolfPopulation']  
-                    print(f"OG Cave {i['id']} has a population of {ogPop}")
-                    ogId = i['id']
-                    if ogPop == 350:
-                        #send message to wolf-game channel
+            # Print response code with description
+            responseString = str(response.status_code)
+            print(f"responseCode: {responseString}")
+
+            if response.status_code == 401:
+                print("Unauthorized")
+            elif response.status_code == 503:
+                print("Service Unavailable")
+            elif response.status_code == 200:
+                data = response.json()
+
+                # Find the OG and FREE cave with the highest ID
+                og_caves = [cave for cave in data if cave['type'] == "OG"]
+                free_caves = [cave for cave in data if cave['type'] == "FREE"]
+
+                if og_caves:
+                    og_highest = max(og_caves, key=lambda x: x['id'])
+                    ogPop = og_highest['sheepPopulation'] + og_highest['wolfPopulation']
+                    ogId = og_highest['id']
+                    message_og = f"OG Cave {ogId} has a population of {ogPop}"
+                    print(message_og)
+                    if ogPop in [350, 390] and message_og not in recent_messages:
                         channel = bot.get_channel(969249236464050187)
-                        await channel.send(f"OG Cave {ogId} has a population of {ogPop}")
-                    if ogPop == 390:
-                        #send message to wolf-game channel
+                        await channel.send(message_og)
+                        recent_messages.append(message_og)
+
+                if free_caves:
+                    free_highest = max(free_caves, key=lambda x: x['id'])
+                    freePop = free_highest['sheepPopulation'] + free_highest['wolfPopulation']
+                    freeId = free_highest['id']
+                    message_free = f"FREE Cave {freeId} has a population of {freePop}"
+                    print(message_free)
+                    if freePop in [350, 390] and message_free not in recent_messages:
                         channel = bot.get_channel(969249236464050187)
-                        await channel.send(f"OG Cave {ogId} has a population of {ogPop}")
-                elif type == "FREE":
-                    freePop = i['sheepPopulation'] + i['wolfPopulation']  
-                    print(f"FREE Cave {i['id']} has a population of {freePop}")
-                    freeId = i['id']
-                    if freePop == 350:
-                        #send message to wolf-game channel
-                        channel = bot.get_channel(969249236464050187)
-                        await channel.send(f"FREE Cave {freeId} has a population of {freePop}")
-                    if freePop == 390:
-                        #send message to wolf-game channel
-                        channel = bot.get_channel(969249236464050187)
-                        await channel.send(f"FREE Cave {freeId} has a population of {freePop}")
-        else:
-            print("Error")
+                        await channel.send(message_free)
+                        recent_messages.append(message_free)
+
+                # Maintain only the 5 most recent messages
+                if len(recent_messages) > 5:
+                    recent_messages = recent_messages[-5:]
+            else:
+                print("Error")
+            #close file
+            file.close()
+            
+            print(recent_messages)
 
 
     async def getPeakGame():
