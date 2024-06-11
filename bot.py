@@ -63,6 +63,8 @@ table = Query()
 dbMed = TinyDB('meddb.json')
 dbHackScore = TinyDB('hackScore.json')
 
+recent_messages = []
+
 
 def p5js_to_image(sketch):
     #remove last }
@@ -1099,7 +1101,7 @@ def main(source, verbose=False):
         await asyncio.sleep(config['updateFreq'])  # in seconds
 
     async def get_cave_pop():
-        recent_messages = []
+        
         
         url = "https://cave-api.wolf.game/game/caves"
         # Load the web3token text file
