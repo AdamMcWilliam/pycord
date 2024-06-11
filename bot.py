@@ -1100,7 +1100,7 @@ def main(source, verbose=False):
 
         await asyncio.sleep(config['updateFreq'])  # in seconds
 
-    async def get_cave_pop():
+    async def get_cave_pop(recent_messages):
         
         
         url = "https://cave-api.wolf.game/game/caves"
@@ -1636,7 +1636,7 @@ def main(source, verbose=False):
                 continue    
             
             #await getPeakGame()
-            await get_cave_pop()
+            await get_cave_pop(recent_messages)
             
 
     bot.run(config['discordBotKey'])
