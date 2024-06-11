@@ -1137,7 +1137,7 @@ def main(source, verbose=False):
                     print(message_og)
                     if ogPop in [350, 390] and message_og not in recent_messages:
                         channel = bot.get_channel(969249236464050187)
-                        await channel.send(message_og)
+                        await channel.send(message_og, delete_after=600)
                         recent_messages.append(message_og)
 
                 if free_caves:
@@ -1148,7 +1148,7 @@ def main(source, verbose=False):
                     print(message_free)
                     if freePop in [350, 390] and message_free not in recent_messages:
                         channel = bot.get_channel(969249236464050187)
-                        await channel.send(message_free)
+                        await channel.send(message_free, delete_after=600)
                         recent_messages.append(message_free)
 
                 # Maintain only the 5 most recent messages
